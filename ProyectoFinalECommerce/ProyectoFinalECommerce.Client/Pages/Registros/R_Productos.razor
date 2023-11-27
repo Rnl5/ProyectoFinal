@@ -1,0 +1,167 @@
+@page "/R_Producto"
+@page "/R_Producto/{ProductoId:int}"
+@inject HttpClient HttpClient
+@using Microsoft.AspNetCore.Components.Forms;
+
+<EditForm Model="productos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Productos</h3>
+            </div>
+
+            <div class=card-body>
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Producto Id:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value=" productos.ProductoId" class="form-control" aria-describedby="BotonBuscar" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Fecha"> Fecha de ingreso:</label>
+                    <InputDate @bind-Value=" productos.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => productos.Fecha)" />
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Descripcion">  Descripción:</label>
+                    <InputText @bind-Value=" productos.Descripcion" class="form-control" />
+                    <ValidationMessage For="@(() => productos.Descripcion)" />
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Nombre"> Nombre:</label>
+                    <InputText @bind-Value=" productos.Nombre" class="form-control" />
+                    <ValidationMessage For="@(() => productos.Nombre)" />
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Precio"> Precio:</label>
+                    <InputNumber @bind-Value=" productos.Precio" class="form-control" />
+                    <ValidationMessage For="@(() => productos.Precio)" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label" for="Foto"><i class="oi oi-puzzle-piece" /> Foto:</label>
+                    <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg" />
+                    <ValidationMessage For="@(() => productos.Foto)" />
+
+                </div>
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</EditForm>
+
+@code {
+
+
+    [Parameter]
+
+    public int ProductoId { get; set; }
+    //public Productos productos {get; set;} = new Productos();
+    public Productos productos { get; set; } = new Productos();
+
+    //public List<Productos> Productos { get; set; } = new List<Productos>();
+
+    public List<Productos> l_Productos { get; set; } = new List<Productos>();
+
+    public string Mensaje { get; set; } = string.Empty;
+
+    private async Task CargarImagen(InputFileChangeEventArgs e)
+    {
+        var archivo = e.File;
+        var buffer = new byte[archivo.Size];
+
+        await archivo.OpenReadStream().ReadAsync(buffer);
+        productos.Foto = buffer;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ProductoId > 0)
+        {
+            this.productos.ProductoId = ProductoId;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var ProductoEncontrado = await HttpClient.GetFromJsonAsync<Productos>($"api/Productos/{productos.ProductoId}");
+        if (ProductoEncontrado != null)
+        {
+            this.productos = ProductoEncontrado;
+            StateHasChanged();
+        }
+        else
+        {
+            Mensaje = "Producto no encontrada";
+        }
+    }
+
+
+    public async void Guardar()
+    {
+        try
+        {
+            using var response = await HttpClient.PostAsJsonAsync("api/Productos", productos);
+            if (!response.IsSuccessStatusCode)
+            {
+                // Manejo de errores
+                Console.WriteLine($"Error en la solicitud: {response.StatusCode}");
+                return;
+            }
+
+            var productoDevuelto = await response.Content.ReadFromJsonAsync<Productos>();
+            if (productoDevuelto is not null)
+            {
+                productos = productoDevuelto;
+                StateHasChanged();
+                Nuevo();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al procesar la solicitud: {ex.Message}");
+        }
+    }
+
+
+    public void Nuevo()
+    {
+        this.productos = new Productos();
+        Mensaje = string.Empty;
+    }
+
+    public async Task Eliminar()
+    {
+        using var response = await HttpClient.DeleteAsync($"api/Clientes/{productos.ProductoId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            Mensaje = response.ReasonPhrase ?? "error";
+            return;
+        }
+        else
+            Nuevo();
+    }
+}
