@@ -1,0 +1,69 @@
+﻿@page "/Catalogo"
+@inject HttpClient httpClient
+
+
+<div class="productos">
+    <hi>Prueba</hi>
+    
+    @foreach (var item in ListaProductos)
+    {
+        <div class="card col-3 item-card">
+            <div class="img-container">
+                @if (item.Foto != null)
+                {
+                    var base64 = Convert.ToBase64String(item.Foto);
+                    var imgSrc = $"data:image/jpeg;base64,{base64}";
+                    <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" />
+                }
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <strong>Nombre:</strong> @item.Nombre
+                </div>
+                <div class="mb-3">
+                    <strong>Descripción:</strong> @item.Descripcion
+                </div>
+                <div class="mb-3">
+                    <strong>Precio:</strong> $@item.Precio
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    //public List<Productos> ListaProductos { get; set; } = new List<Productos>();
+
+    public List<Productos> ListaProductos { get; set; } = new List<Productos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Llama a tu API para obtener la lista de productos desde el servidor
+        // ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>("api/Productos");
+        //ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>("api/Productos");
+        await Buscar();
+
+    }
+
+    public async Task Buscar()
+    {
+        //var ProductoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos");
+      
+        ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>($"api/Productos");
+
+    }
+
+    public class Productos
+    {
+
+        public int ProductoId { get; set; }
+        public byte[]? Foto { get; set; }
+        public string? Nombre { get; set; }
+        public string? Descripcion { get; set; }
+        public decimal Precio { get; set; }
+
+    }
+}
+
