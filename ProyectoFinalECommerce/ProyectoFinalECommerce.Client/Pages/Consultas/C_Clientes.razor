@@ -2,10 +2,11 @@
 
 @inject HttpClient httpClient
 @using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveAuto
 
-@attribute [Authorize]
+@attribute [Authorize(Roles ="Admin")]
 
-<AuthorizeView>
+<AuthorizeView Roles ="Admin">
     <Authorized>
 <div class="container">
     <div class="card">
