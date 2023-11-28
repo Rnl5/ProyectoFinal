@@ -1,7 +1,7 @@
 ﻿@page "/registroClientes"
 @page "/registroClientes/{ClienteId:int}"
 
-
+@rendermode InteractiveAuto
 @inject HttpClient httpClient
 
 <EditForm Model="clientes" OnValidSubmit="Guardar">
@@ -19,7 +19,7 @@
                 <div class="col-3">
                     <div class="input-group mb-3">
                         <InputNumber class="form-control" @bind-Value="ClienteId" aria-describedby="BuscarId"></InputNumber>
-                        <button type="button" class="btn btn-outline-primary" @onclick="Buscar" id="BuscarId"><i class="oi oi-magnifying-glass"></i></button>
+                        <button type="button" class="btn btn-outline-primary" @onclick="Buscar" id="BuscarId"><i class="bi bi-search"></i></button>
                     </div>
                 </div>
 
@@ -84,7 +84,7 @@
                             </div>
 
                             <div class="col">
-                                <button type="button" class="btn btn-outline-primary" @onclick="AgregarDetalle"><i class="oi oi-plus">Agregar</i></button>
+                                <button type="button" class="btn btn-outline-primary" @onclick="AgregarDetalle"><i class="bi bi-plus">Agregar</i></button>
                             </div>
 
                             @if (MensajeVal.Length > 0)
@@ -137,6 +137,7 @@
     [Parameter]
     public int ClienteId { get; set; }
 
+    [SupplyParameterFromForm]
     public Clientes clientes { get; set; } = new Clientes();
 
     public string Nombre { get; set; } = string.Empty;
@@ -172,9 +173,9 @@
 
     public async Task Buscar()
     {
-        var clienteEncontrado = await httpClient.GetFromJsonAsync<Clientes>($"api/Clientes/{clientes.ClienteId}");
+        var clienteEncontrado = await httpClient.GetFromJsonAsync<Clientes>($"api/Clientes/{ClienteId}");
 
-        if (clienteEncontrado != null)
+        if (clienteEncontrado is not null)
         {
             clientes = clienteEncontrado;
             StateHasChanged();
