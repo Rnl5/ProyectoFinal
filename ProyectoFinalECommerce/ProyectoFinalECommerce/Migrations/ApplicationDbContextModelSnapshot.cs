@@ -17,33 +17,6 @@ namespace ProyectoFinalECommerce.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("ClientesDetalle", b =>
-                {
-                    b.Property<int>("DetalleIdCliente")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TipoTelId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DetalleIdCliente");
-
-                    b.HasIndex("ClienteId");
-
-                    b.ToTable("ClientesDetalle");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -262,6 +235,62 @@ namespace ProyectoFinalECommerce.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.ClientesDetalle", b =>
+                {
+                    b.Property<int>("DetalleIdCliente")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TipoTelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DetalleIdCliente");
+
+                    b.HasIndex("ClienteId");
+
+                    b.ToTable("ClientesDetalle");
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Productos", b =>
+                {
+                    b.Property<int>("ProductoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Foto")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("ProductoId");
+
+                    b.ToTable("Productos");
+                });
+
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.TelefonosClientes", b =>
                 {
                     b.Property<int>("TipoTelId")
@@ -297,15 +326,6 @@ namespace ProyectoFinalECommerce.Migrations
                             TipoTelId = 4,
                             TipoTelefono = "Persona Auxiliar"
                         });
-                });
-
-            modelBuilder.Entity("ClientesDetalle", b =>
-                {
-                    b.HasOne("ProyectoFinalECommerce.Shared.Clientes", null)
-                        .WithMany("ClientesDetalle")
-                        .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -355,6 +375,15 @@ namespace ProyectoFinalECommerce.Migrations
                     b.HasOne("ProyectoFinalECommerce.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.ClientesDetalle", b =>
+                {
+                    b.HasOne("ProyectoFinalECommerce.Shared.Clientes", null)
+                        .WithMany("ClientesDetalle")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

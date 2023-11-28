@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinalECommerce.Shared;
 
@@ -33,5 +33,6 @@ namespace ProyectoFinalECommerce.Data
             }
         });
         }
+        public DbSet<ProyectoFinalECommerce.Shared.Productos> Productos { get; set; } = default!;
     }
 }
