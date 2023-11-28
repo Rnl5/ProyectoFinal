@@ -262,6 +262,35 @@ namespace ProyectoFinalECommerce.Migrations
                     b.ToTable("ClientesDetalle");
                 });
 
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Productos", b =>
+                {
+                    b.Property<int>("ProductoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Foto")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("ProductoId");
+
+                    b.ToTable("Productos");
+                });
+
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.TelefonosClientes", b =>
                 {
                     b.Property<int>("TipoTelId")

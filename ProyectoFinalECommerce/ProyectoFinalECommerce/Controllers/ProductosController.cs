@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoFinalECommerce.Data;
 using ProyectoFinalECommerce.Shared;
 
+
 namespace ProyectoFinalECommerce.Controllers
 {
     [Route("api/[controller]")]
@@ -25,10 +26,6 @@ namespace ProyectoFinalECommerce.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Productos>>> GetProductos()
         {
-            if (_context.Productos == null)
-            {
-                return NotFound();
-            }
             return await _context.Productos.ToListAsync();
         }
 
@@ -49,7 +46,8 @@ namespace ProyectoFinalECommerce.Controllers
                 return NotFound();
             }
 
-            return productos;
+            return productos;   
+
         }
 
         // PUT: api/Productos/5
@@ -102,10 +100,6 @@ namespace ProyectoFinalECommerce.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProductos(int id)
         {
-            if (_context.Productos == null)
-            {
-                return NotFound();
-            }
             var productos = await _context.Productos.FindAsync(id);
             if (productos == null)
             {
@@ -118,10 +112,9 @@ namespace ProyectoFinalECommerce.Controllers
             return NoContent();
         }
 
-
         private bool ProductosExists(int id)
         {
-            return (_context.Productos?.Any(e => e.ProductoId == id)).GetValueOrDefault();
+            return _context.Productos.Any(e => e.ProductoId == id);
         }
     }
 }

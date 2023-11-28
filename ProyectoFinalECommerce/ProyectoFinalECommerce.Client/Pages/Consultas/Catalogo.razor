@@ -3,6 +3,8 @@
 
 
 <div class="productos">
+    <hi>Prueba</hi>
+    
     @foreach (var item in ListaProductos)
     {
         <div class="card col-3 item-card">
@@ -41,14 +43,16 @@
         // Llama a tu API para obtener la lista de productos desde el servidor
         // ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>("api/Productos");
         //ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>("api/Productos");
-       await Buscar();
+        await Buscar();
 
     }
 
     public async Task Buscar()
     {
-        var ProductoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos");
-        
+        //var ProductoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos");
+      
+        ListaProductos = await httpClient.GetFromJsonAsync<List<Productos>>($"api/Productos");
+
     }
 
     public class Productos
