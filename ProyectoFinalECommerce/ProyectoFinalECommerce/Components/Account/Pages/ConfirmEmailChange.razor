@@ -9,9 +9,9 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Confirm email change</PageTitle>
+<PageTitle>Confirmar cambio de correo electrónico</PageTitle>
 
-<h1>Confirm email change</h1>
+<h1>Confirmar el cambio de correo electrónico</h1>
 
 <StatusMessage Message="@message" />
 
@@ -41,7 +41,7 @@
         var user = await UserManager.FindByIdAsync(UserId);
         if (user is null)
         {
-            message = "Unable to find user with Id '{userId}'";
+            message = "No se puede encontrar el usuario con el ID '{userId}'";
             return;
         }
 
@@ -49,7 +49,7 @@
         var result = await UserManager.ChangeEmailAsync(user, Email, code);
         if (!result.Succeeded)
         {
-            message = "Error changing email.";
+            message = "Error al cambiar el correo electronico";
             return;
         }
 
@@ -58,11 +58,11 @@
         var setUserNameResult = await UserManager.SetUserNameAsync(user, Email);
         if (!setUserNameResult.Succeeded)
         {
-            message = "Error changing user name.";
+            message = "Error al cambiar el nombre de usuario.";
             return;
         }
 
         await SignInManager.RefreshSignInAsync(user);
-        message = "Thank you for confirming your email change.";
+        message = "Gracias por confirmar el cambio de correo electrónico.";
     }
 }
