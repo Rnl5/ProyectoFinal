@@ -11,8 +11,8 @@ using ProyectoFinalECommerce.Data;
 namespace ProyectoFinalECommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231127204933_Prueba")]
-    partial class Prueba
+    [Migration("20231128030553_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
