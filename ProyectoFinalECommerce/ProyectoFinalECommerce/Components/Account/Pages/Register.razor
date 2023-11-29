@@ -18,11 +18,11 @@
 <PageTitle>Registro</PageTitle>
 
 <h1>Registro</h1>
-
+<EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
 <div class="row">
     <div class="col-md-4">
         <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+        
             <DataAnnotationsValidator />
             <h2>Crea una cuenta nueva.</h2>
             <hr />
@@ -43,16 +43,56 @@
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Registro</button>
-        </EditForm>
+        
     </div>
     <div class="col-md-6 col-md-offset-2">
-        <section>
+            <section>
+                <h3>Datos Personales</h3>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <InputText type="text" @bind-Value="Input.Nombre" class="form-control" autocomplete="nombre" aria-required="true" placeholder="Nombre" />
+                            <label for="nombreCliente">Nombres</label>
+                            <ValidationMessage For="() => Input.Nombre" class="text-danger" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <InputText type="text" @bind-Value="Input.Apellido" class="form-control" autocomplete="apellido" aria-required="true" placeholder="Apellido" />
+                            <label for="apellidoCliente">Apellidos</label>
+                            <ValidationMessage For="() => Input.Apellido" class="text-danger" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <InputDate @bind-Value="Input.FechaNacimiento" class="form-control" autocomplete="fechaNacimiento" aria-required="true" placeholder="Fecha de Nacimiento" />
+                            <label for="fechaNacimientoCliente">Fecha de Nacimiento</label>
+                            <ValidationMessage For="() => Input.FechaNacimiento" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <InputText type="text" @bind-Value="Input.NumeroCedula" class="form-control" autocomplete="numeroCedula" aria-required="true" placeholder="Numero de Cedula" />
+                            <label for="numeroCedulaCliente">Numero de Cedula</label>
+                            <ValidationMessage For="() => Input.NumeroCedula" class="text-danger" />
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+    </div>
+        @*<section>
             <h3>Utilice otro servicio para registrarse.</h3>
             <hr />
             <ExternalLoginPicker />
-        </section>
-    </div>
+        </section>*@
 </div>
+</EditForm>
+
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
@@ -69,11 +109,15 @@
     {
         var user = CreateUser();
 
+        //user.Nombre = Input.Nombre;
+        user.Apellido = Input.Apellido;
+        user.FechaNacimiento = Input.FechaNacimiento;
+        user.NumeroCedula = Input.NumeroCedula;
+
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
-
         if (!result.Succeeded)
         {
             identityErrors = result.Errors;
@@ -141,5 +185,14 @@
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
+
+        public string Nombre { get; set; } = string.Empty;
+
+        public string Apellido { get; set; } = string.Empty;
+
+        public DateTime FechaNacimiento { get; set; }
+
+        public string NumeroCedula { get; set; } = string.Empty;
+
     }
 }
