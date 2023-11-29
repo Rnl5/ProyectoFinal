@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoFinalECommerce.Data;
 
@@ -10,9 +11,11 @@ using ProyectoFinalECommerce.Data;
 namespace ProyectoFinalECommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231129001949_Modificando la fecha de Nacimiento")]
+    partial class ModificandolafechadeNacimiento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -211,9 +214,6 @@ namespace ProyectoFinalECommerce.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
