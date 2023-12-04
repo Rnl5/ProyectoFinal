@@ -227,6 +227,52 @@ namespace ProyectoFinalECommerce.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Categorias", b =>
+                {
+                    b.Property<int>("CategoriaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoriaId");
+
+                    b.ToTable("Categorias");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoriaId = 1,
+                            Icon = "camera-slr",
+                            Nombre = "Electrodomesticos",
+                            Url = "electrodomesticos"
+                        },
+                        new
+                        {
+                            CategoriaId = 2,
+                            Icon = "camera-slr",
+                            Nombre = "Productos del Hogar",
+                            Url = "productosDelHogar"
+                        },
+                        new
+                        {
+                            CategoriaId = 3,
+                            Icon = "camera-slr",
+                            Nombre = "Televisores",
+                            Url = "televisores"
+                        });
+                });
+
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.Clientes", b =>
                 {
                     b.Property<int>("ClienteId")
@@ -286,9 +332,18 @@ namespace ProyectoFinalECommerce.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("EsPublico")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EstaBorrado")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
@@ -302,6 +357,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PrecioOriginal")
                         .HasColumnType("REAL");
 
                     b.HasKey("ProductoId");

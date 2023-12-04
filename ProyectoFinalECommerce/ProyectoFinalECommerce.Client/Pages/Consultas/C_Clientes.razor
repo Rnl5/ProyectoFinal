@@ -1,4 +1,4 @@
-﻿@page "/consultaClientes"
+﻿@*@page "/consultaClientes"
 
 @inject HttpClient httpClient
 @using Microsoft.AspNetCore.Authorization
@@ -101,7 +101,7 @@
 
 @code
 {
-    public List<Clientes> clientes { get; set; } = new List<Clientes>();
+    public List<ApplicationUser> clientes { get; set; } = new List<Clientes>();
     public int Conteo { get; set; }
 
     public DateTime Desde { get; set; }
@@ -131,4 +131,4 @@
         Conteo = clientes != null ? clientes.Count : 0;
         StateHasChanged();
     }
-}
+}*@

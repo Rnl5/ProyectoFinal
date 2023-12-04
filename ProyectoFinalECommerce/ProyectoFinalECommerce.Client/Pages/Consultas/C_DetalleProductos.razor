@@ -1,0 +1,60 @@
+﻿@* @page "/detallesProducto" *@
+@page "/detallesProducto/{ProductoId}"
+
+@inject IServicioProducto ServicioProducto
+@inject HttpClient httpClient
+@* <h3>@(producto != null ? producto.Nombre : "Producto no encontrado")</h3> *@
+
+    
+@if(producto != null)
+{
+    <div class="media">
+        <div class="img-container">
+            @if (producto.Foto != null)
+            {
+                var base64 = Convert.ToBase64String(producto.Foto);
+                var imgSrc = $"data:image/jpeg;base64,{base64}";
+
+                <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" width="300" />
+
+            }
+        </div>
+
+        <div class="media-body">
+            <h2 class="mb-0">@(producto != null ? producto.Nombre : "Producto no encontrado")</h2>
+            <p>@producto.Descripcion</p>
+            @if (producto.PrecioOriginal > producto.Precio)
+            {
+                <h6 class="text-muted original-price">@producto.PrecioOriginal</h6>
+            }
+
+            <h4 class="price">
+                @producto.Precio
+            </h4>
+
+            <button class="btn btn-outline-primary"><i class="bi bi-cart"></i>Agregar al carrito</button>
+        </div>
+    </div>
+}
+
+
+
+@code 
+{
+    public Productos producto { get; set; }
+
+    [Parameter]
+    public string ProductoId { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(ServicioProducto.productos == null || ServicioProducto.productos.Count == 0)
+        {
+            await ServicioProducto.CargarProductos($"api/Productos");
+        }
+
+        producto = ServicioProducto.productos.FirstOrDefault(p => p.ProductoId == Int32.Parse(ProductoId));
+    }
+
+}
