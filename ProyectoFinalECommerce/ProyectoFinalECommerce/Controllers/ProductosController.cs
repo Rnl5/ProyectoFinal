@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoFinalECommerce.Data;
 using ProyectoFinalECommerce.Shared;
 
-
 namespace ProyectoFinalECommerce.Controllers
 {
     [Route("api/[controller]")]
@@ -33,21 +32,17 @@ namespace ProyectoFinalECommerce.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Productos>> GetProductos(int id)
         {
-            if (_context.Productos == null)
-            {
-                return NotFound();
-            }
             var productos = await _context.Productos
-                .Where(c => c.ProductoId == id)
-                .FirstOrDefaultAsync();
+                                .Where(p => p.ProductoId == id)
+                                .FirstOrDefaultAsync();
+
 
             if (productos == null)
             {
                 return NotFound();
             }
 
-            return productos;   
-
+            return productos;
         }
 
         // PUT: api/Productos/5
@@ -86,14 +81,19 @@ namespace ProyectoFinalECommerce.Controllers
         [HttpPost]
         public async Task<ActionResult<Productos>> PostProductos(Productos productos)
         {
-            if (!ProductosExists(productos.ProductoId))
+            if(!ProductosExists(productos.ProductoId))
+            { 
                 _context.Productos.Add(productos);
+            }
             else
+            {
                 _context.Productos.Update(productos);
+            }
 
             await _context.SaveChangesAsync();
 
             return Ok(productos);
+            
         }
 
         // DELETE: api/Productos/5
