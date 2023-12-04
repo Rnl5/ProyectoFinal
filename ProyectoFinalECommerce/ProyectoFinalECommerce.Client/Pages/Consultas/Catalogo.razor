@@ -3,8 +3,7 @@
 @inject IServicioProducto ServicioProducto
 
 <div class="productos">
-    <h1>Prueba</h1>
-    
+
     @foreach (var item in CategoriaId == null ? ServicioProducto.productos : ServicioProducto.productos.Where(p => p.CategoriaId == CategoriaId))
     {
         <div class="card col-3 item-card">
@@ -40,6 +39,7 @@
 
 @code 
 {
+    [Parameter]
     public int? CategoriaId { get; set; } = null;
 
 
