@@ -52,6 +52,8 @@ builder.Services.AddScoped(http => new HttpClient
     BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
 });
 
+builder.Services.AddBlazoredLocalStorage();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -157,7 +157,7 @@
     private string? email;
     private string? nombre;
     private string? apellido;
-    private DateTime? FechaN;
+    private DateTime FechaN;
     private string? numCedula;
     public IEnumerable<TelefonosClientes> L_TiposTelefono { get; set; } = Enumerable.Empty<TelefonosClientes>();
 
@@ -187,7 +187,7 @@
 
         Input.NuevoNombre ??= nombre;
         Input.NuevoApellido ??= apellido;
-        Input.NuevaFechaN ??= FechaN;
+        Input.NuevaFechaN = FechaN;
         Input.NuevoNumCedula ??= numCedula;
 
         //await CargarTiposTelefonos();
@@ -226,7 +226,7 @@
             message = "Su apellido ha sido actualizado correctamente.";
             return;
         }
-        if (Input.NuevaFechaN is null || Input.NuevaFechaN == FechaN)
+        if (Input.NuevaFechaN == null || Input.NuevaFechaN == FechaN)
         {
             message = "Su fecha de nacimiento no ha cambiado.";
             return;
@@ -254,89 +254,7 @@
             message = "Su numero de cedula ha sido actualizado correctamente";
             return;
         }
-
-
-        // if(!response.IsSuccessStatusCode)
-        // {
-        //     return;
-        // }
-
-        // var clienteDevuelto = await response.Content.ReadFromJsonAsync<Clientes>();
-
-        // if(clienteDevuelto is not null)
-        // {
-        //     clientes = clienteDevuelto;
-        //     StateHasChanged();
-        // }
     }
-
-    // public async Task AgregarDetalle()
-    // {
-    //     Console.WriteLine("Mio, yo estoy entrando");
-    //     if (!ValidarDetalle())
-    //     {
-    //         return;
-    //     }
-
-    //     clientes.ClientesDetalle.Add(new ClientesDetalle
-    //         {
-    //             TipoTelId = tipoTelefonoSeleccionado,
-    //             Nombre = nombreInsertado,
-    //             Telefono = telefonoInsertado
-    //         });
-    //     tipoTelefonoSeleccionado = 0;
-    //     nombreInsertado = string.Empty;
-    //     telefonoInsertado = string.Empty;
-    //     StateHasChanged();
-    // }
-
-    // public void RemoverDetalle(ClientesDetalle detalleRemover)
-    // {
-    //     tipoTelefonoSeleccionado = detalleRemover.TipoTelId;
-    //     nombreInsertado = detalleRemover.Nombre;
-    //     telefonoInsertado = detalleRemover.Telefono;
-
-    //     clientes.ClientesDetalle.Remove(detalleRemover);
-    // }
-
-    // public bool ValidarDetalle()
-    // {
-    //     ValidacionD = string.Empty;
-
-    //     if (tipoTelefonoSeleccionado <= 0)
-    //     {
-    //         ValidacionD = "El tipo de telefono es obligatorio";
-    //     }
-
-    //     if (string.IsNullOrWhiteSpace(nombreInsertado))
-    //     {
-    //         ValidacionD = "El nombre es obligatorio";
-    //     }
-
-    //     if (string.IsNullOrWhiteSpace(telefonoInsertado))
-    //     {
-    //         ValidacionD = "El numero telefonico es obligatorio";
-    //     }
-
-
-    //     return ValidacionD.Length == 0;
-    // }
-
-    // private async Task CargarTiposTelefonos()
-    // {
-    //     var encontrados = await httpClient.GetFromJsonAsync<IEnumerable<TelefonosClientes>>("api/TelefonosClientes");
-    //     if (encontrados != null)
-    //     {
-    //         L_TiposTelefono = encontrados;
-    //     }
-    // }
-
-    // public string TipoTelefono(int tipoId)
-    // {
-    //     var tipoTel = L_TiposTelefono.FirstOrDefault(t => t.TipoTelId == tipoId);
-
-    //     return tipoTel!.TipoTelefono;
-    // }
 
     private sealed class InputModel
     {
@@ -344,7 +262,7 @@
 
         public string? NuevoApellido { get; set; }
 
-        public DateTime? NuevaFechaN { get; set; }
+        public DateTime NuevaFechaN { get; set; }
 
         public string? NuevoNumCedula { get; set; }
     }
