@@ -1,8 +1,10 @@
 ﻿@page "/"
-    @*
 @page "/{UrlCategoria}"
 
+
 @inject IServicioCategoria ServicioCategoria
+
+
 
 <PageTitle>Home</PageTitle>
 
@@ -14,7 +16,7 @@
 
 else
 {
-    <h1>Bienvendio a la tienda del hogar macorisano</h1>
+    <h1>Bienvenido a la tienda del hogar macorisano</h1>
     <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo />
 }
 
@@ -37,4 +39,4 @@ else
             categoria = null;
         }
     }
-} *@
+}
