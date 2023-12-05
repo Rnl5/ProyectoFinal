@@ -6,6 +6,6 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioProducto
     {
         List<Productos> productos { get; set; }
 
-        Task CargarProductos(string requestUrl);
+        Task CargarProductos(string ruta);
     }
 }

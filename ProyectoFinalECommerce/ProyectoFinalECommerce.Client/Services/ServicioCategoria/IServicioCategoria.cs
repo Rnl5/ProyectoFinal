@@ -4,8 +4,8 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioCategoria
 {
     public interface IServicioCategoria
     {
-        public List<Categorias> Categorias { get; set; }
+        public IEnumerable<Categorias> L_Categorias { get; set; }
 
-        void CargarCategorias();
+        Task CargarCategorias();
     }
 }

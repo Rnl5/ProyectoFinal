@@ -18,9 +18,9 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioProducto
             this.httpClient = httpClient;
         }
 
-        public async Task CargarProductos(string requestUri)
+        public async Task CargarProductos(string ruta)
         {
-            productos = await httpClient.GetFromJsonAsync<List<Productos>>(requestUri);
+            productos = await httpClient.GetFromJsonAsync<List<Productos>>(ruta);
         }
     }
 }
