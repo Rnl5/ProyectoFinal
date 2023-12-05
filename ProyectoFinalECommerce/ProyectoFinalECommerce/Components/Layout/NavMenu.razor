@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Authorization
 @inject IServicioCategoria ServicioCategoria
+@inject HttpClient httpClient
 
 
 @attribute [Authorize]
@@ -31,22 +32,31 @@
 
         <hr />
         <div class="nav-item px-3">
-            @foreach(var categoria in ServicioCategoria.Categorias)
+            @foreach(var categoria in ServicioCategoria.L_Categorias)
             {
                 <NavLink class="nav-link" href="@categoria.Url">
-                    <span class="bi bi-@categoria.Icon" aria-hidden="true"></span> @categoria.Nombre
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @categoria.Nombre
                 </NavLink>
             }
         </div>
         <hr />
+
         <AuthorizeView  Roles="Admin">
             <Authorized>
                  
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/ConsultaUsuarios">
+                    <NavLink class="nav-link" href="Account/ConsultaUsuarios">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Consulta de usuarios
                     </NavLink>
                 </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="registro_Categorias">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registro de categorias
+                    </NavLink>
+                </div>
+
+                
                  <div class="nav-item px-3">
                     <NavLink class="nav-link" href="R_Producto">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registros productos
@@ -55,12 +65,6 @@
             </Authorized>
         </AuthorizeView>
         
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
         @*
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="auth">
@@ -105,12 +109,11 @@
 @code {
     private string? currentUrl;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
-
-        ServicioCategoria.CargarCategorias();
+        await ServicioCategoria.CargarCategorias();
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
