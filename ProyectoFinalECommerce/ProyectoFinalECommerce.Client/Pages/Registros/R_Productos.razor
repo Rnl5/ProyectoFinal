@@ -146,7 +146,7 @@
 
     public async Task Buscar()
     {
-        var productoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos/{producto.ProductoId}");
+        var productoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos/{ProductoId}");
 
         if (productoEncontrado != null)
         {
