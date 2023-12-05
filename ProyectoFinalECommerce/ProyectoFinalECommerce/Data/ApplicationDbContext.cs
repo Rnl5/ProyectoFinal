@@ -35,31 +35,6 @@ namespace ProyectoFinalECommerce.Data
                     TipoTelId = 4, TipoTelefono ="Persona Auxiliar"
                 }
             });
-
-            modelBuilder.Entity<Categorias>().HasData(new List<Categorias>()
-            {
-                    new Categorias
-                    {
-                        CategoriaId = 1,
-                        Nombre = "Electrodomesticos",
-                        Url ="electrodomesticos",
-                        Icon = "camera-slr"
-                    },
-                    new Categorias
-                    {
-                        CategoriaId = 2,
-                        Nombre = "Productos del Hogar",
-                        Url ="productosDelHogar",
-                        Icon = "camera-slr"
-                    },
-                    new Categorias
-                    {
-                        CategoriaId = 3,
-                        Nombre = "Televisores",
-                        Url ="televisores",
-                        Icon = "camera-slr"
-                    }
-            });
         }
         
         
