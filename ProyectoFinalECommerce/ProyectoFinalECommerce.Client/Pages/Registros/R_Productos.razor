@@ -2,9 +2,8 @@
 
 @inject HttpClient httpClient
 
+
 @rendermode InteractiveServer
-
-
 
 <EditForm Model="producto" OnValidSubmit="Guardar" FormName="R_Producto">
     <DataAnnotationsValidator/>
@@ -161,9 +160,8 @@
 
     public async void Guardar()
     {
-        try
-        {
-            using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
+        using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
+        //using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -179,10 +177,6 @@
                 StateHasChanged();
                 Nuevo();
             }
-        }catch(Exception ex)
-        {
-            Console.WriteLine($"Error al procesar la solicitud: {ex.Message}");
-        }
     }
 
     public void Nuevo()
