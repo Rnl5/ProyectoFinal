@@ -33,10 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Components\Layout\Lista_Productos.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="DataBase\" />
   </ItemGroup>
 

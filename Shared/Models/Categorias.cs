@@ -17,6 +17,4 @@ public class Categorias
 
     public string Url { get; set; }
 
-    public string Icon { get; set; }
-
 }
