@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/{UrlCategoria}"
+@inject HttpClient httpClient
 
 
 @inject IServicioCategoria ServicioCategoria
@@ -28,14 +29,26 @@ else
 
     private Categorias categoria { get; set; }
 
-    protected override void OnParametersSet()
+    public List<Categorias> categorias { get; set; }
+
+    public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
+
+    public IEnumerable<Categorias> L_CategoriasCopia { get; set; } = Enumerable.Empty<Categorias>();
+
+    protected override async void OnParametersSet()
     {
+        //L_Categorias = await httpClient.GetFromJsonAsync<List<Categorias>>("api/Categorias");
         if(UrlCategoria != null)
         {
-            categoria = ServicioCategoria.Categorias.FirstOrDefault(c => c.Url.ToLower().Equals(UrlCategoria.ToLower()));
+
+            
+            categoria = L_Categorias.FirstOrDefault(c => c.Url.ToLower().Equals(UrlCategoria.ToLower()));
+
         }
-        else
-        {
+
+
+        if (UrlCategoria == null)
+    {
             categoria = null;
         }
     }
