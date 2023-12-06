@@ -8,7 +8,6 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioCategoria
         private readonly HttpClient httpClient;
 
         public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
-        //public List<Categorias> Categorias { get; set; } = new List<Categorias>();
 
         public ServicioCategoria(HttpClient httpClient)
         {
