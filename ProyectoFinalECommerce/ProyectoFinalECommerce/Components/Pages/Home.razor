@@ -12,7 +12,7 @@
 @if(categoria != null)
 {
     <h1>Bienvenido a la seccion de @categoria.Nombre</h1>
-    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo UrlCategoria = "@categoria.Url"/>
+    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo CategoriaId = "@categoria.CategoriaId"/>
 }
 
 else
@@ -27,7 +27,7 @@ else
     [Parameter]
     public string UrlCategoria { get; set; }
 
-    private Categorias categoria { get; set; }
+    private Categorias categoria { get; set; } = new Categorias();
 
     public List<Categorias> categorias { get; set; }
 
@@ -35,16 +35,14 @@ else
 
     public IEnumerable<Categorias> L_CategoriasCopia { get; set; } = Enumerable.Empty<Categorias>();
 
-    protected override async void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         await ServicioCategoria.CargarCategorias();
-        //L_Categorias = await httpClient.GetFromJsonAsync<List<Categorias>>("api/Categorias");
+        categorias = ServicioCategoria.L_Categorias.ToList();
         if(UrlCategoria != null)
         {
-
             
-            categoria = L_Categorias.FirstOrDefault(c => c.Url.ToLower().Equals(UrlCategoria.ToLower()));
-
+            categoria = categorias.FirstOrDefault(c => c.Url.ToLower().Equals(UrlCategoria.ToLower()));
         }
 
 
