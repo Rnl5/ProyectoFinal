@@ -12,7 +12,7 @@
 @if(categoria != null)
 {
     <h1>Bienvenido a la seccion de @categoria.Nombre</h1>
-    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo CategoriaId = "@categoria.CategoriaId"/>
+    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo UrlCategoria = "@categoria.Url"/>
 }
 
 else
@@ -37,6 +37,7 @@ else
 
     protected override async void OnParametersSet()
     {
+        await ServicioCategoria.CargarCategorias();
         //L_Categorias = await httpClient.GetFromJsonAsync<List<Categorias>>("api/Categorias");
         if(UrlCategoria != null)
         {
