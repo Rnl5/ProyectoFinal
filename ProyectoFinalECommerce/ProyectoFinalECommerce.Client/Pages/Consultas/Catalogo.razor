@@ -1,5 +1,4 @@
 ﻿@page "/Catalogo"
-@page "/Catalogo/{UrlCategoria}"
 
 @inject HttpClient httpClient
 @inject IServicioProducto ServicioProducto
@@ -7,7 +6,7 @@
 
 <div class="productos">
 
-    @foreach (var item in FiltradoProductos())
+    @foreach (var item in CategoriaId == null ? ServicioProducto.productos : ServicioProducto.productos.Where(p => p.CategoriaId == CategoriaId))
     {
         <div class="card col-3 item-card">
             <div class="img-container">
@@ -43,30 +42,12 @@
 @code 
 {
     [Parameter]
-    public string UrlCategoria { get; set; }
+    public int? CategoriaId { get; set; } = null;
+
 
 
     protected override async Task OnInitializedAsync()
     {
-        await ServicioProducto.CargarProductos($"api/Productos/{UrlCategoria}");
+        await ServicioProducto.CargarProductos("api/Productos");
     }
-
-    private IEnumerable<Productos> FiltradoProductos()
-    {
-        var productos = ServicioProducto.productos;
-
-        if (!string.IsNullOrEmpty(UrlCategoria))
-        {
-            var categoria = ServicioCategoria.L_Categorias.FirstOrDefault(c => c.Url.ToLower() == UrlCategoria.ToLower());
-
-            if(categoria != null)
-            {
-                return productos.Where(p => p.CategoriaId == categoria.CategoriaId);
-            }
-        }
-
-        return productos;
-    }
-
-
 }
