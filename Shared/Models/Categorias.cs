@@ -13,8 +13,10 @@ public class Categorias
     [Key]
     public int CategoriaId { get; set; }
 
+    [Required(ErrorMessage = "El campo {0} es obligatorio")]
     public string Nombre { get; set; }
 
+    [Required(ErrorMessage = "El campo {0} es obligatorio")]
     public string Url { get; set; }
 
 }

@@ -14,20 +14,20 @@ public class Productos
 
 
     [Required(ErrorMessage = "Este campo es nesesario")]
-    public DateTime Fecha {get; set;}
+    public DateTime Fecha {get; set;} = DateTime.Now;
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Descripcion { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public double Precio { get; set; }
 
+    [Required(ErrorMessage = "El campo {0} es obligatorio")]
     public double PrecioOriginal { get; set; }
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public byte[]? Foto { get; set; }
-
-    public bool EsPublico { get; set; }
-
-    public bool EstaBorrado {  get; set; }
 }
