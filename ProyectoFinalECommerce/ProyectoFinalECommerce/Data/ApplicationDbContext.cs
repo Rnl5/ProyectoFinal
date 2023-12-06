@@ -12,6 +12,7 @@ namespace ProyectoFinalECommerce.Data
 
         public DbSet<Productos> Productos { get; set; }
         public DbSet<Categorias> Categorias { get; set; } = default!;
+        public DbSet<Carrito> Carrito { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
