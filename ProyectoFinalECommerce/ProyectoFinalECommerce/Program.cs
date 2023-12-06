@@ -9,7 +9,6 @@ using ProyectoFinalECommerce.Components;
 using ProyectoFinalECommerce.Components.Account;
 using ProyectoFinalECommerce.Data;
 using Radzen;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -46,7 +45,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
-builder.Services.AddScoped<IServicioCarrito, ServicioCarrito>();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
@@ -55,7 +53,6 @@ builder.Services.AddScoped(http => new HttpClient
     BaseAddress = new Uri(builder.Configuration.GetSection("BaseAddress").Value!)
 });
 
-builder.Services.AddScoped<NotificationService>();
 //builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
