@@ -1,8 +1,9 @@
 ﻿@page "/registro_Categorias"
 
-
 @inject HttpClient httpClient
+@inject NotificationService notificationService
 
+<RadzenNotification />
 <EditForm Model="categoria" OnValidSubmit="Guardar" FormName="registro_Categorias">
     <DataAnnotationsValidator />
 
@@ -41,9 +42,9 @@
 
                 <div class="card-footer d-flex justify-content-center">
                     <div class="btn-group">
-                        <button @onclick="Nuevo" type="button" class="btn btn-outline-primary"><i class="bi bi-file-earmark">Nuevo</i></button>
-                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-file-earmark-check-fill">Guardar</i></button>
-                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3">Eliminar</i></button>
+                        <button @onclick="Nuevo" type="button" class="btn btn-outline-primary"><i class="bi bi-file-earmark"> Nuevo</i></button>
+                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-file-earmark-check-fill"> Guardar</i></button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3"> Eliminar</i></button>
                     </div>
                 </div>
         </div>
@@ -64,6 +65,8 @@
 
     public List<Categorias> categorias { get; set; } = new List<Categorias>();
 
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,7 +80,7 @@
 
     public async Task Buscar()
     {
-        var categoriaEncontrada = await httpClient.GetFromJsonAsync<Categorias>($"api/Categorias/{categoria.CategoriaId}");
+        var categoriaEncontrada = await httpClient.GetFromJsonAsync<Categorias>($"api/Categorias/{CategoriaId}");
 
         if(categoriaEncontrada != null)
         {
@@ -86,7 +89,15 @@
         }
         else
         {
-            Console.WriteLine("La categoria no se ha encontrado");
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al buscar",
+                    Detail = "Ha ocurrido un error a la hora de realizar la busqueda de una categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
         }
     }
 
@@ -98,6 +109,14 @@
 
             if (!response.IsSuccessStatusCode)
             {
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                        Detail = "Ha ocurrido un error a la hora de guardar un catalogo",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
                 return;
             }
             var categoriaDevuelta = await response.Content.ReadFromJsonAsync<Categorias>();
@@ -107,6 +126,16 @@
                 categoria = categoriaDevuelta;
                 StateHasChanged();
                 Nuevo();
+
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Exito al guardar",
+                        Detail = "Ha guardado correctamente el catalogo",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
+                return;
             }
         }
         catch
@@ -127,11 +156,28 @@
 
         if (!response.IsSuccessStatusCode)
         {
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al eliminar",
+                    Detail = "Ha ocurrido un error al eliminar una categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
             return;
         }
         else
         {
             Nuevo();
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Exito al eliminar",
+                    Detail = "Ha eliminado correctamente la categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
         }
     }
 }

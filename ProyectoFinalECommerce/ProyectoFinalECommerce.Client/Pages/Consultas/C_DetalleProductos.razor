@@ -3,9 +3,11 @@
 
 @inject IServicioProducto ServicioProducto
 @inject HttpClient httpClient
+@inject NotificationService notificationService
+
 @* <h3>@(producto != null ? producto.Nombre : "Producto no encontrado")</h3> *@
 
-    
+<RadzenNotification />
 @if(producto != null)
 {
     <div class="media">
@@ -32,7 +34,7 @@
                 @producto.Precio
             </h4>
 
-            <button class="btn btn-outline-primary"><i class="bi bi-cart"></i>Agregar al carrito</button>
+            <a href="/carritoCompras"><button @onclick="AgregarCarrito" class="btn btn-outline-primary"><i class="bi bi-cart"></i> Agregar al carrito</button> </a>
         </div>
     </div>
 }
@@ -40,11 +42,18 @@
 
 
 @code 
+
 {
     public Productos producto { get; set; }
 
     [Parameter]
     public string ProductoId { get; set; }
+
+    [Inject]
+    public IServicioCarrito ServicioCarrito { get; set; }
+
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
+
 
 
     protected override async Task OnInitializedAsync()
@@ -57,4 +66,27 @@
         producto = ServicioProducto.productos.FirstOrDefault(p => p.ProductoId == Int32.Parse(ProductoId));
     }
 
+
+    public void AgregarCarrito()
+    {
+        var objetoNuevo = new Carrito
+        {
+          ProductoId = 1,
+          Nombre = "Este es el producto de ejemplo",
+          Precio = 2490,
+          Cantidad = 1
+        };
+
+        ServicioCarrito.AgregarCarrito(objetoNuevo);
+
+        Mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Ha agregado el producto al carrito",
+                Detail = "El producto {producto.Nombre} ha sido agregado al carrito",
+                Duration = 5_000
+            };
+        notificationService.Notify(Mensaje);
+        return;
+    }
 }

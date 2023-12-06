@@ -1,12 +1,14 @@
 @page "/R_Producto"
 
 @inject HttpClient httpClient
-
+@inject NotificationService notificationService
 
 @rendermode InteractiveServer
 
+<RadzenNotification />
 <EditForm Model="producto" OnValidSubmit="Guardar" FormName="R_Producto">
     <DataAnnotationsValidator/>
+
 
     <div class="container"> 
         <div class="card"> 
@@ -15,22 +17,24 @@
             </div> 
 
             
-                 <div class="col">
+                 <div class="col-2">
                     <label>Producto Id</label>
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="ProductoId" class="form-control" aria-describedby="botonBuscar"></InputNumber>
-                        <button type="button" @onclick="Buscar" class="btn btn-outline-primary"></button>
+                    <button type="button" @onclick="Buscar" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
                     </div>
                 </div> 
-
-                 <label>Fecha de ingreso</label>
-                <div class="input-group mb-3">
-                    <InputDate class="form-control" @bind-Value="producto.Fecha"></InputDate>
-                    _<ValidationMessage For="@(() => producto.Fecha)"></ValidationMessage>
-                </div> 
+                
+                <div class="col-3">
+                     <label>Fecha de ingreso</label>
+                    <div class="input-group mb-3">
+                        <InputDate class="form-control" @bind-Value="producto.Fecha"></InputDate>
+                        <ValidationMessage For="@(() => producto.Fecha)"></ValidationMessage>
+                    </div> 
+                </div>
 
                  <div class="row">
-                    <div class="col">
+                    <div class="col-3">
                         <label>Nombre:</label>
                         <div class="input-group mb-3">
                             <InputText @bind-Value="producto.Nombre" class="form-control"></InputText>
@@ -38,7 +42,7 @@
                         </div>
                     </div>
 
-                    <div class="col">
+                    <div class="col-5">
                         <label>Descripcion</label>
                         <div class="input-group mb-3">
                             <InputTextArea @bind-Value="producto.Descripcion" class="form-control"></InputTextArea>
@@ -48,7 +52,7 @@
                 </div> 
 
                  <div class="row">
-                    <div class="col">
+                    <div class="col-3">
                         <label>Precio:</label>
                         <div class="input-group mb-3">
                             <InputNumber class="form-control" @bind-Value="producto.Precio"></InputNumber>
@@ -56,7 +60,7 @@
                         </div>
                     </div>
 
-                    <div class="col">
+                    <div class="col-3">
                         <label>Precio Original</label>
                         <div class="input-group mb-3">
                             <InputNumber class="form-control" @bind-Value="producto.PrecioOriginal"></InputNumber>
@@ -66,7 +70,7 @@
                 </div> 
 
                  <div class="row">
-                     <div class="col">
+                     <div class="col-3">
                          <label>Categorias:</label>
                          <div class="input-group mb-3">
                             <InputSelect class="form-select" @bind-Value="producto.CategoriaId">
@@ -79,7 +83,7 @@
                          </div>
                      </div>
 
-                    <div class="col">
+                    <div class="col-4">
                         <label>Foto del producto:</label>
                         <div class="input-group mb-3">
                             <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
@@ -89,20 +93,13 @@
 
                 <div class="card-footer d-flex justify-content-center">
                     <div class="btn-group">
-
-                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
-                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
-                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
-                    
+                        <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="bi bi-file-earmark" /></button>
+                        <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-file-earmark-check-fill" /></button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
                     </div>
                 </div>
-
-
-
          </div> 
      </div>
-
-
 </EditForm>
 
 
@@ -114,13 +111,9 @@
     [SupplyParameterFromForm]
     public Productos producto { get; set; } = new Productos();
 
-    public List<Productos> productos { get; set; } = new List<Productos>();
-
     public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
 
-    public int categoriaSeleccionada { get; set; }
-
-    public string Mensaje { get; set; } = string.Empty;
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
 
 
     protected override async Task OnInitializedAsync()
@@ -154,18 +147,32 @@
         }
         else
         {
-            Mensaje = "Producto no encontrado";
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al buscar un producto",
+                    Detail = "Ha ocurrido un error a la hora de buscar un producto",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
         }
     }
 
     public async void Guardar()
     {
         using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
-        //using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Error en la solicitud: {response.StatusCode}");
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                        Detail = "Ha ocurrido un error",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
                 return;
             }
 
@@ -176,13 +183,32 @@
                 producto = productoDevuelto;
                 StateHasChanged();
                 Nuevo();
+
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Exito al guardar",
+                        Detail = "Ha guardado correctamente",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
+                return;
             }
     }
 
     public void Nuevo()
     {
-        producto = new Productos();
-        Mensaje = string.Empty;
+        this.producto = new Productos();
+
+        Mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = "Se ha limpiado el formulario",
+                Detail = "Ahora puede rellenar nuevamente el formulario",
+                Duration = 5_000
+            };
+        notificationService.Notify(Mensaje);
+        return;
     }
 
     public async Task Eliminar()
@@ -191,12 +217,28 @@
 
         if(!response.IsSuccessStatusCode)
         {
-            Mensaje = response.ReasonPhrase ?? "Error";
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al eliminar",
+                    Detail = "Ha ocurrido un error a la hora de eliminar",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
             return;
         }
         else
         {
             Nuevo();
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Exito al eliminar",
+                    Detail = "Ha eliminado el producto correctamente",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
         }
     }
 
@@ -209,5 +251,4 @@
         await archivo.OpenReadStream().ReadAsync(buffer);
         producto.Foto = buffer;
     }
-    
 }
