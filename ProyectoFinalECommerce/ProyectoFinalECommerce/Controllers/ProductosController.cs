@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using ProyectoFinalECommerce.Data;
 using ProyectoFinalECommerce.Shared;
 
-
 namespace ProyectoFinalECommerce.Controllers
 {
     [Route("api/[controller]")]
@@ -17,38 +16,46 @@ namespace ProyectoFinalECommerce.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+       // public List<Productos> Productos { get; set; } = new List<Productos>();
+
         public ProductosController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        //public ProductosController()
+        //{
+            
+        //}
+
+
         // GET: api/Productos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Productos>>> GetProductos()
         {
-            return await _context.Productos.ToListAsync();
+              return await _context.Productos.ToListAsync();
         }
 
         // GET: api/Productos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Productos>> GetProductos(int id)
         {
-            if (_context.Productos == null)
-            {
-                return NotFound();
-            }
             var productos = await _context.Productos
-                .Where(c => c.ProductoId == id)
-                .FirstOrDefaultAsync();
+                                .Where(p => p.ProductoId == id)
+                                .FirstOrDefaultAsync();
+
 
             if (productos == null)
             {
                 return NotFound();
             }
 
-            return productos;   
-
+            return productos;
         }
+       // public Productos? GetProductoC(int id) => Productos.SingleOrDefault(p => p.ProductoId == id);
+
+
+        //public void Agregar(Productos productos) => Productos.Add(productos);
 
         // PUT: api/Productos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -86,14 +93,19 @@ namespace ProyectoFinalECommerce.Controllers
         [HttpPost]
         public async Task<ActionResult<Productos>> PostProductos(Productos productos)
         {
-            if (!ProductosExists(productos.ProductoId))
+            if(!ProductosExists(productos.ProductoId))
+            { 
                 _context.Productos.Add(productos);
+            }
             else
+            {
                 _context.Productos.Update(productos);
+            }
 
             await _context.SaveChangesAsync();
 
             return Ok(productos);
+            
         }
 
         // DELETE: api/Productos/5

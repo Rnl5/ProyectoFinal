@@ -1,0 +1,45 @@
+﻿@page "/carritoCompras"
+
+@inject IServicioCarrito ServicioCarrito
+
+<h3>Carrito de compras</h3>
+
+@if(objetosCarrito != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach(var objeto in objetosCarrito)
+            {
+                <tr>
+                    <td>@objeto.Nombre</td>
+                    <td>@objeto.Precio</td>
+                    <td>@objeto.Cantidad</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+else
+{
+    <p>El carrito de compras se encuentra vacio</p>
+}
+
+@code 
+{
+    private IEnumerable<Carrito> objetosCarrito;
+
+    protected override async Task OnInitializedAsync()
+    {
+        objetosCarrito = await ServicioCarrito.GetCarrito();
+    }
+
+}

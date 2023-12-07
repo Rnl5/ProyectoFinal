@@ -1,168 +1,254 @@
 @page "/R_Producto"
-@page "/R_Producto/{ProductoId:int}"
-@inject HttpClient HttpClient
-@using Microsoft.AspNetCore.Components.Forms;
-@rendermode InteractiveAuto
 
-<EditForm Model="productos" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
-    <div class="container">
-        <div class="card shadow-lg">
-            <div class="card-header">
-                <h3>Registro de Productos</h3>
-            </div>
+@inject HttpClient httpClient
+@inject NotificationService notificationService
 
-            <div class=card-body>
+@rendermode InteractiveServer
 
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Producto Id:</label>
+<RadzenNotification />
+<EditForm Model="producto" OnValidSubmit="Guardar" FormName="R_Producto">
+    <DataAnnotationsValidator/>
+
+
+    <div class="container"> 
+        <div class="card"> 
+             <div class="card-header">
+                <h3>Registro de productos</h3>
+            </div> 
+
+            
+                 <div class="col-2">
+                    <label>Producto Id</label>
                     <div class="input-group mb-3">
-                        <InputNumber @bind-Value=" productos.ProductoId" class="form-control" aria-describedby="BotonBuscar" />
-                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
+                        <InputNumber @bind-Value="ProductoId" class="form-control" aria-describedby="botonBuscar"></InputNumber>
+                    <button type="button" @onclick="Buscar" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+                    </div>
+                </div> 
+                
+                <div class="col-3">
+                     <label>Fecha de ingreso</label>
+                    <div class="input-group mb-3">
+                        <InputDate class="form-control" @bind-Value="producto.Fecha"></InputDate>
+                        <ValidationMessage For="@(() => producto.Fecha)"></ValidationMessage>
+                    </div> 
+                </div>
+
+                 <div class="row">
+                    <div class="col-3">
+                        <label>Nombre:</label>
+                        <div class="input-group mb-3">
+                            <InputText @bind-Value="producto.Nombre" class="form-control"></InputText>
+                            <ValidationMessage For="@(() => producto.Nombre)"></ValidationMessage>
+                        </div>
+                    </div>
+
+                    <div class="col-5">
+                        <label>Descripcion</label>
+                        <div class="input-group mb-3">
+                            <InputTextArea @bind-Value="producto.Descripcion" class="form-control"></InputTextArea>
+                            <ValidationMessage For="@(() => producto.Descripcion)"></ValidationMessage>
+                        </div>
+                    </div>
+                </div> 
+
+                 <div class="row">
+                    <div class="col-3">
+                        <label>Precio:</label>
+                        <div class="input-group mb-3">
+                            <InputNumber class="form-control" @bind-Value="producto.Precio"></InputNumber>
+                            <ValidationMessage For="@(() => producto.Precio)"></ValidationMessage>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <label>Precio Original</label>
+                        <div class="input-group mb-3">
+                            <InputNumber class="form-control" @bind-Value="producto.PrecioOriginal"></InputNumber>
+                            <ValidationMessage For="@(() => producto.PrecioOriginal)"></ValidationMessage>
+                        </div>
+                    </div>
+                </div> 
+
+                 <div class="row">
+                     <div class="col-3">
+                         <label>Categorias:</label>
+                         <div class="input-group mb-3">
+                            <InputSelect class="form-select" @bind-Value="producto.CategoriaId">
+                                <option value="0" disabled selected>Seleccione la categoria</option>
+                                @foreach(var categoria in L_Categorias)
+                            {
+                                <option value="@categoria.CategoriaId">@categoria.Nombre</option>
+                            }
+                        </InputSelect>
+                         </div>
+                     </div>
+
+                    <div class="col-4">
+                        <label>Foto del producto:</label>
+                        <div class="input-group mb-3">
+                            <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="Fecha"> Fecha de ingreso:</label>
-                    <InputDate @bind-Value=" productos.Fecha" class="form-control" />
-                    <ValidationMessage For="@(() => productos.Fecha)" />
-
+                <div class="card-footer d-flex justify-content-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="bi bi-file-earmark" /></button>
+                        <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-file-earmark-check-fill" /></button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Descripcion">  Descripci�n:</label>
-                    <InputText @bind-Value=" productos.Descripcion" class="form-control" />
-                    <ValidationMessage For="@(() => productos.Descripcion)" />
-
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Nombre"> Nombre:</label>
-                    <InputText @bind-Value=" productos.Nombre" class="form-control" />
-                    <ValidationMessage For="@(() => productos.Nombre)" />
-
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Precio"> Precio:</label>
-                    <InputNumber @bind-Value=" productos.Precio" class="form-control" />
-                    <ValidationMessage For="@(() => productos.Precio)" />
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label" for="Foto"><i class="oi oi-puzzle-piece" /> Foto:</label>
-                    <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg" />
-                    <ValidationMessage For="@(() => productos.Foto)" />
-
-                </div>
-
-            </div>
-
-            <div class="card-footer d-flex justify-content-center">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
-                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
-                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
+         </div> 
+     </div>
 </EditForm>
 
-@code {
 
-
+@code
+{
     [Parameter]
-
     public int ProductoId { get; set; }
-    //public Productos productos {get; set;} = new Productos();
-    public Productos productos { get; set; } = new Productos();
 
-    //public List<Productos> Productos { get; set; } = new List<Productos>();
+    [SupplyParameterFromForm]
+    public Productos producto { get; set; } = new Productos();
 
-    public List<Productos> l_Productos { get; set; } = new List<Productos>();
+    public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
 
-    public string Mensaje { get; set; } = string.Empty;
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
 
-    private async Task CargarImagen(InputFileChangeEventArgs e)
-    {
-        var archivo = e.File;
-        var buffer = new byte[archivo.Size];
-
-        await archivo.OpenReadStream().ReadAsync(buffer);
-        productos.Foto = buffer;
-    }
 
     protected override async Task OnInitializedAsync()
     {
+        await CargarCategorias();
         if (ProductoId > 0)
         {
-            this.productos.ProductoId = ProductoId;
+            producto.ProductoId = ProductoId;
             await Buscar();
+        }
+    }
+
+    private async Task CargarCategorias()
+    {
+        var categoriaEncontrada = await httpClient.GetFromJsonAsync<IEnumerable<Categorias>>("api/Categorias");
+
+        if(categoriaEncontrada != null)
+        {
+            L_Categorias = categoriaEncontrada;
         }
     }
 
     public async Task Buscar()
     {
-        var ProductoEncontrado = await HttpClient.GetFromJsonAsync<Productos>($"api/Productos/{productos.ProductoId}");
-        if (ProductoEncontrado != null)
+        var productoEncontrado = await httpClient.GetFromJsonAsync<Productos>($"api/Productos/{ProductoId}");
+
+        if (productoEncontrado != null)
         {
-            this.productos = ProductoEncontrado;
+            producto = productoEncontrado;
             StateHasChanged();
         }
         else
         {
-            Mensaje = "Producto no encontrada";
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al buscar un producto",
+                    Detail = "Ha ocurrido un error a la hora de buscar un producto",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
         }
     }
 
-
     public async void Guardar()
     {
-        try
-        {
-            using var response = await HttpClient.PostAsJsonAsync("api/Productos", productos);
+        using var response = await httpClient.PostAsJsonAsync("api/Productos", producto);
+
             if (!response.IsSuccessStatusCode)
             {
-                // Manejo de errores
-                Console.WriteLine($"Error en la solicitud: {response.StatusCode}");
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                        Detail = "Ha ocurrido un error",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
                 return;
             }
 
             var productoDevuelto = await response.Content.ReadFromJsonAsync<Productos>();
-            if (productoDevuelto is not null)
+
+            if(productoDevuelto is not null)
             {
-                productos = productoDevuelto;
+                producto = productoDevuelto;
                 StateHasChanged();
                 Nuevo();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al procesar la solicitud: {ex.Message}");
-        }
-    }
 
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Exito al guardar",
+                        Detail = "Ha guardado correctamente",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
+                return;
+            }
+    }
 
     public void Nuevo()
     {
-        this.productos = new Productos();
-        Mensaje = string.Empty;
+        this.producto = new Productos();
+
+        Mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = "Se ha limpiado el formulario",
+                Detail = "Ahora puede rellenar nuevamente el formulario",
+                Duration = 5_000
+            };
+        notificationService.Notify(Mensaje);
+        return;
     }
 
     public async Task Eliminar()
     {
-        using var response = await HttpClient.DeleteAsync($"api/Clientes/{productos.ProductoId}");
-        if (!response.IsSuccessStatusCode)
+        using var response = await httpClient.DeleteAsync($"api/Productos/{producto.ProductoId}");
+
+        if(!response.IsSuccessStatusCode)
         {
-            Mensaje = response.ReasonPhrase ?? "error";
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al eliminar",
+                    Detail = "Ha ocurrido un error a la hora de eliminar",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
             return;
         }
         else
+        {
             Nuevo();
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Exito al eliminar",
+                    Detail = "Ha eliminado el producto correctamente",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
+        }
+    }
+
+
+    public async Task CargarImagen(InputFileChangeEventArgs e)
+    {
+        var archivo = e.File;
+        var buffer = new byte[archivo.Size];
+
+        await archivo.OpenReadStream().ReadAsync(buffer);
+        producto.Foto = buffer;
     }
 }

@@ -1,0 +1,75 @@
+﻿@page "/carritoComprasV"
+@* @using ProyectoFinalECommerce.Model
+
+@inject IServicioProducto ServicioProducto
+
+
+<PageTitle>Carrito</PageTitle>
+
+
+<br />
+
+@if (estado.Canasta.Ordenes.Any())
+{
+    <h1>Tu carrito</h1>
+
+    @foreach(var(producto, pos) in estado.Canasta.Ordenes.Select(
+       (id, pos) => (estado.Menu.GetProductoC(id), pos)))
+    {
+        <div class="row mb-2">
+            <div class="col">
+                @producto.Nombre
+            </div>
+
+            <div class="col text-right">
+                @($"{producto.Precio:0.00}")
+            </div>
+
+            <div class="col"></div>
+            <div class="col"></div>
+
+            <div class="col">
+                <button class ="btn btn-danger" @onclick="@(() => RemoverCarrito(pos))">Remover</button>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col"><hr /></div>
+        <div class="col"></div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row">
+        <div class="col">Total:</div>
+        <div class="col text-right font-weight-bold">@($"{estado.PrecioTotal:0.00}")</div>
+        <div class="col"></div>
+        <div class="col"></div>
+        <div class="col"> </div>
+    </div>
+} *@
+
+<br/>
+
+<h1 class="mt-2 mb-2">Por favor, Introduzca sus datos abajo</h1>
+
+@code 
+{
+    /*private EstadoCompra estado { get; set; } = new EstadoCompra();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ServicioProducto.CargarProductos($"api/Productos");
+    }
+
+    public void AgregarCarrito(Productos productos) => estado.Canasta.Agregar(productos.ProductoId);
+
+    public void RemoverCarrito(int pos) => estado.Canasta.Eliminar(pos);
+
+    public void RealizarPedido()
+    {
+        Console.WriteLine("Realizando pedido...");
+    }*/
+
+}
