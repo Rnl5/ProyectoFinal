@@ -32,6 +32,11 @@ namespace ProyectoFinalECommerce.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
+                    UsuarioId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    Apellido = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    NumeroCedula = table.Column<string>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -50,6 +55,21 @@ namespace ProyectoFinalECommerce.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categorias",
+                columns: table => new
+                {
+                    CategoriaId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    Url = table.Column<string>(type: "TEXT", nullable: false),
+                    Icon = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categorias", x => x.CategoriaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,11 +94,15 @@ namespace ProyectoFinalECommerce.Migrations
                 {
                     ProductoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    CategoriaId = table.Column<int>(type: "INTEGER", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
                     Precio = table.Column<double>(type: "REAL", nullable: false),
-                    Foto = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    PrecioOriginal = table.Column<double>(type: "REAL", nullable: false),
+                    Foto = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    EsPublico = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EstaBorrado = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -227,6 +251,16 @@ namespace ProyectoFinalECommerce.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Categorias",
+                columns: new[] { "CategoriaId", "Icon", "Nombre", "Url" },
+                values: new object[,]
+                {
+                    { 1, "camera-slr", "Electrodomesticos", "electrodomesticos" },
+                    { 2, "camera-slr", "Productos del Hogar", "productosDelHogar" },
+                    { 3, "camera-slr", "Televisores", "televisores" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "TelefonosClientes",
                 columns: new[] { "TipoTelId", "TipoTelefono" },
                 values: new object[,]
@@ -297,6 +331,9 @@ namespace ProyectoFinalECommerce.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Categorias");
 
             migrationBuilder.DropTable(
                 name: "ClientesDetalle");

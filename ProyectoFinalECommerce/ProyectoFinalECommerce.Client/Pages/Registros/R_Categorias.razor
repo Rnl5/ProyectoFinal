@@ -1,0 +1,183 @@
+﻿@page "/registro_Categorias"
+
+@inject HttpClient httpClient
+@inject NotificationService notificationService
+
+<RadzenNotification />
+<EditForm Model="categoria" OnValidSubmit="Guardar" FormName="registro_Categorias">
+    <DataAnnotationsValidator />
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Registro de Categorias</h2>
+        </div>
+
+        <div class="card-body">
+            <div class="col-2">
+                <label>Categoria Id</label>
+                <div class="input-group mb-3">
+                    <InputNumber @bind-Value="CategoriaId" class="form-control"></InputNumber>
+                        <button @type="button" @onclick="Buscar" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <label>Nombre:</label>
+                    <div class="input-group mb-3">
+                        <InputText @bind-Value="categoria.Nombre" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => categoria.Nombre)"></ValidationMessage>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <label>Ruta de la categoria:</label>
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" @bind-Value="categoria.Url"></InputText>
+                        <ValidationMessage For="@(() => categoria.Url)"></ValidationMessage>
+                    </div>    
+                </div>
+            </div>
+
+                <div class="card-footer d-flex justify-content-center">
+                    <div class="btn-group">
+                        <button @onclick="Nuevo" type="button" class="btn btn-outline-primary"><i class="bi bi-file-earmark"> Nuevo</i></button>
+                        <button class="btn btn-outline-success" type="submit"><i class="bi bi-file-earmark-check-fill"> Guardar</i></button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><i class="bi bi-trash3"> Eliminar</i></button>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+
+</EditForm>
+
+@code 
+{
+    [Parameter]
+    public int CategoriaId { get; set; }
+
+    [SupplyParameterFromForm]
+    public Categorias categoria { get; set; } = new Categorias();
+
+    public List<Categorias> categorias { get; set; } = new List<Categorias>();
+
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(CategoriaId > 0)
+        {
+            categoria.CategoriaId = CategoriaId;
+            await Buscar();
+        }
+    }
+
+
+    public async Task Buscar()
+    {
+        var categoriaEncontrada = await httpClient.GetFromJsonAsync<Categorias>($"api/Categorias/{CategoriaId}");
+
+        if(categoriaEncontrada != null)
+        {
+            categoria = categoriaEncontrada;
+            StateHasChanged();
+        }
+        else
+        {
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al buscar",
+                    Detail = "Ha ocurrido un error a la hora de realizar la busqueda de una categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
+        }
+    }
+
+    public async Task Guardar()
+    {
+        try
+        {
+            using var response = await httpClient.PostAsJsonAsync("api/Categorias", categoria);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Error,
+                        Summary = "Error al guardar",
+                        Detail = "Ha ocurrido un error a la hora de guardar un catalogo",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
+                return;
+            }
+            var categoriaDevuelta = await response.Content.ReadFromJsonAsync<Categorias>();
+
+            if(categoriaDevuelta is not null)
+            {
+                categoria = categoriaDevuelta;
+                StateHasChanged();
+                Nuevo();
+
+                Mensaje = new NotificationMessage
+                    {
+                        Severity = NotificationSeverity.Success,
+                        Summary = "Exito al guardar",
+                        Detail = "Ha guardado correctamente el catalogo",
+                        Duration = 5_000
+                    };
+                notificationService.Notify(Mensaje);
+                return;
+            }
+        }
+        catch
+        {
+
+        }
+    }
+
+    public void Nuevo()
+    {
+        categoria = new Categorias();
+    }
+
+
+    public async Task Eliminar()
+    {
+        using var response = await httpClient.DeleteAsync($"api/Categorias/{categoria.CategoriaId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Error al eliminar",
+                    Detail = "Ha ocurrido un error al eliminar una categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
+        }
+        else
+        {
+            Nuevo();
+            Mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Exito al eliminar",
+                    Detail = "Ha eliminado correctamente la categoria",
+                    Duration = 5_000
+                };
+            notificationService.Notify(Mensaje);
+            return;
+        }
+    }
+}

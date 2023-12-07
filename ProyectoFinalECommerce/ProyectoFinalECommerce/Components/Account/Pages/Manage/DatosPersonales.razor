@@ -1,0 +1,269 @@
+﻿@page "/Account/Manage/DatosPersonales"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using ProyectoFinalECommerce.Data
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IEmailSender<ApplicationUser> EmailSender
+@inject IdentityUserAccessor UserAccessor
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+
+<PageTitle>Datos personales</PageTitle>
+
+<h3>Mis datos personales</h3>
+
+<StatusMessage Message="@message" />
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="Input" FormName="ver-Datos-Personales" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="form-floating mb-3 input-group">
+                <input type="text" value="@email" class="form-control" placeholder="Por favor introduzca su correo electrónico." disabled />
+                <div class="input-group-append">
+                    <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
+                </div>
+                <label for="email" class="form-label">Correo electrónico</label>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.NuevoNombre" class="form-control" autocomplete="nombre" aria-required="true" placeholder="Por favor inserte un nombre" />
+                        <label for="nombre" class="form-label">Nombre</label>
+                        @*<ValidationMessage For="() => Input.NewEmail" class="text-danger" />*@
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.NuevoApellido" class="form-control" autocomplete="apellido" aria-required="true" placeholder="Por favor ingresa un apellido." />
+                        <label for="apellido" class="form-label">Apellido</label>
+                        @*<ValidationMessage For="() => Input.NewEmail" class="text-danger" />*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <InputDate @bind-Value="Input.NuevaFechaN" class="form-control" autocomplete= "fechaN" aria-required="true" placeholder="Por favor ingresa una fecha de nacimiento ." />
+                        <label for="fechaN" class="form-label">Fecha de nacimiento</label>
+                        @*<ValidationMessage For="() => Input.NewEmail" class="text-danger" />*@
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <InputText @bind-Value="Input.NuevoNumCedula" class="form-control" autocomplete="numCedula" aria-required="true" placeholder="Por favor ingresa un numero de cedula." />
+                        <label for="numCedula" class="form-label">N&uacute;mero de cedula</label>
+                        @*<ValidationMessage For="() => Input.NewEmail" class="text-danger" />*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                
+            </div>
+
+            <br />
+            <br />
+
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Guardar</button>
+        </EditForm>
+    </div>
+   @*  <div class="col">
+        <fieldset class="border-success border border-1">
+            <div class="d-flex justify-content-center">
+                <h3>Ingrese los telefonos externos que quiere asignar</h3>
+            </div>
+            <br />
+
+            <div class="row">
+                <div class="col">
+                    <label>Tipo de telefono</label>
+                    <div class="input-group mb-3">
+                        <InputSelect class="form-select" @bind-Value="tipoTelefonoSeleccionado">
+                            <option value="0" disabled selected> Seleccione el tipo de telefono</option>
+                            @foreach (var tipoT in L_TiposTelefono)
+                            {
+                                <option value="@tipoT.TipoTelId">@tipoT.TipoTelefono</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <label>Nombre:</label>
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" @bind-Value="nombreInsertado"></InputText>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <label>Telefono:</label>
+                    <div class="input-group mb-3">
+                        <InputText class="form-control" @bind-Value="telefonoInsertado"></InputText>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <button type="button" class="btn btn-outline-primary" @onclick="AgregarDetalle">
+                        <span class="oi oi-plus">Agregar</span>
+                    </button>
+                </div>
+
+                @if (ValidacionD.Length > 0)
+                {
+                    <label class="text-danger">@ValidacionD</label>
+                }
+            </div>
+
+            <hr />
+
+            <table class="table table-bordered table-light m-1">
+                <thead class="thead">
+                    <tr class="table">
+                        <th>Tipo telefono</th>
+                        <th>Nombre:</th>
+                        <th>Telefono</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var detalle in clientes.ClientesDetalle)
+                    {
+                        <tr>
+                            <td>@(TipoTelefono(detalle.TipoTelId))</td>
+                            <td>@detalle.Nombre</td>
+                            <td>@detalle.Telefono</td>
+                            <td><button @onclick="@(() => RemoverDetalle(detalle))" class="btn btn-outline-danger" type="button"><i class="oi oi-trash">Eliminar</i></button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div> *@
+</div>
+
+@code {
+    private string? message;
+    private ApplicationUser user = default!;
+    private string? email;
+    private string? nombre;
+    private string? apellido;
+    private DateTime FechaN;
+    private string? numCedula;
+    public IEnumerable<TelefonosClientes> L_TiposTelefono { get; set; } = Enumerable.Empty<TelefonosClientes>();
+
+    // public Clientes clientes { get; set; } = new Clientes();
+    // public int tipoTelefonoSeleccionado { get; set; }
+
+    // public string nombreInsertado { get; set; } = string.Empty;
+
+    // public string telefonoInsertado { get; set; } = string.Empty;
+
+    // public string ValidacionD { get; set; } = string.Empty;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm(FormName = "ver-Datos-Personales")]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        email = user.Email;
+        nombre = user.Nombre;
+        apellido = user.Apellido;
+        FechaN = user.FechaNacimiento;
+        numCedula = user.NumeroCedula;
+
+        Input.NuevoNombre ??= nombre;
+        Input.NuevoApellido ??= apellido;
+        Input.NuevaFechaN = FechaN;
+        Input.NuevoNumCedula ??= numCedula;
+
+        //await CargarTiposTelefonos();
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        // using var response = await httpClient.PostAsJsonAsync("api/Clientes", clientes);
+
+        if (Input.NuevoNombre is null || Input.NuevoNombre == nombre)
+        {
+            message = "Su nombre no ha cambiado.";
+            return;
+        }
+        else
+        {
+            user.Nombre = Input.NuevoNombre;
+
+            await UserManager.UpdateAsync(user);
+
+            message = "Su nombre ha sido actualizado correctamente.";
+            return;
+        }
+
+        if (Input.NuevoApellido is null || Input.NuevoApellido == apellido)
+        {
+            message = "Su apellido no ha cambiado.";
+            return;
+        }
+        else
+        {
+            user.Apellido = Input.NuevoApellido;
+
+            await UserManager.UpdateAsync(user);
+
+            message = "Su apellido ha sido actualizado correctamente.";
+            return;
+        }
+        if (Input.NuevaFechaN == null || Input.NuevaFechaN == FechaN)
+        {
+            message = "Su fecha de nacimiento no ha cambiado.";
+            return;
+        }
+        else
+        {
+            user.FechaNacimiento = Input.NuevaFechaN;
+
+            await UserManager.UpdateAsync(user);
+
+            message = "Su fecha de nacimiento ha sido actualizada correctamente";
+            return;
+        }
+        if (Input.NuevoNumCedula is null || Input.NuevoNumCedula == numCedula)
+        {
+            message = "Su numero de cedula no ha cambiado.";
+            return;
+        }
+        else
+        {
+            user.NumeroCedula = Input.NuevoNumCedula;
+
+            await UserManager.UpdateAsync(user);
+
+            message = "Su numero de cedula ha sido actualizado correctamente";
+            return;
+        }
+    }
+
+    private sealed class InputModel
+    {
+        public string? NuevoNombre { get; set; }
+
+        public string? NuevoApellido { get; set; }
+
+        public DateTime NuevaFechaN { get; set; }
+
+        public string? NuevoNumCedula { get; set; }
+    }
+}

@@ -1,7 +1,54 @@
 ﻿@page "/"
+@page "/{UrlCategoria}"
+@inject HttpClient httpClient
+
+
+@inject IServicioCategoria ServicioCategoria
+
+
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@if(categoria != null)
+{
+    <h1>Bienvenido a la seccion de @categoria.Nombre</h1>
+    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo CategoriaId = "@categoria.CategoriaId"/>
+}
 
-Welcome to your new app.
+else
+{
+    <h1>Bienvenido a la tienda del hogar macorisano</h1>
+    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo />
+}
+
+
+@code
+{
+    [Parameter]
+    public string UrlCategoria { get; set; }
+
+    private Categorias categoria { get; set; } = new Categorias();
+
+    public List<Categorias> categorias { get; set; }
+
+    public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
+
+    public IEnumerable<Categorias> L_CategoriasCopia { get; set; } = Enumerable.Empty<Categorias>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ServicioCategoria.CargarCategorias();
+        categorias = ServicioCategoria.L_Categorias.ToList();
+        if(UrlCategoria != null)
+        {
+            
+            categoria = categorias.FirstOrDefault(c => c.Url.ToLower().Equals(UrlCategoria.ToLower()));
+        }
+
+
+        if (UrlCategoria == null)
+    {
+            categoria = null;
+        }
+    }
+}
