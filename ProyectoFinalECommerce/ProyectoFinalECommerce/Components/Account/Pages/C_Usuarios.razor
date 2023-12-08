@@ -1,5 +1,5 @@
 ﻿@page "/Account/ConsultaUsuarios"
-
+@using Microsoft.AspNetCore.Authorization
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
@@ -7,6 +7,9 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using ProyectoFinalECommerce.Data
+
+@attribute [Authorize(Roles = "Admin")]
+
 
 
 @inject UserManager<ApplicationUser> UserManager
@@ -23,10 +26,6 @@
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-
-        <h1>Esta es la consulta de usuarios</h1>
-        
-
         <div class="container">
             <div class="card">
                 <div class="card-header">

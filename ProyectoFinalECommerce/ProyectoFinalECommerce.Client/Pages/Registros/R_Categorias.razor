@@ -1,7 +1,12 @@
 ﻿@page "/registro_Categorias"
+@using Microsoft.AspNetCore.Authorization
 
 @inject HttpClient httpClient
 @inject NotificationService notificationService
+
+
+@attribute [Authorize(Roles = "Admin")]
+
 
 <RadzenNotification />
 <EditForm Model="categoria" OnValidSubmit="Guardar" FormName="registro_Categorias">

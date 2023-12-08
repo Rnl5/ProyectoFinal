@@ -1,9 +1,15 @@
 @page "/R_Producto"
+@using Microsoft.AspNetCore.Authorization
 
 @inject HttpClient httpClient
 @inject NotificationService notificationService
 
 @rendermode InteractiveServer
+
+
+@attribute [Authorize(Roles = "Admin")]
+
+
 
 <RadzenNotification />
 <EditForm Model="producto" OnValidSubmit="Guardar" FormName="R_Producto">
