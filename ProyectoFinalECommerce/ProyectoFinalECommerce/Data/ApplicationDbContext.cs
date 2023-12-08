@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProyectoFinalECommerce.Entidades;
 using ProyectoFinalECommerce.Shared;
 
 namespace ProyectoFinalECommerce.Data
@@ -13,6 +14,10 @@ namespace ProyectoFinalECommerce.Data
         public DbSet<Productos> Productos { get; set; }
         public DbSet<Categorias> Categorias { get; set; } = default!;
         public DbSet<Carrito> Carrito { get; set; } = default!;
+
+        public DbSet<ProductosNuevo> ProductosNuevos { get; set; } = default!;
+
+        public DbSet<CarritoComprasNuevo> CarritoComprasNuevos { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using ProyectoFinalECommerce.Components.Pages;
+using ProyectoFinalECommerce.Entidades;
+using ProyectoFinalECommerce.Shared;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
@@ -17,6 +20,7 @@ namespace ProyectoFinalECommerce.Data
         public DateTime FechaNacimiento { get; set; } = DateTime.Now.AddYears(-20);
 
         public string NumeroCedula { get; set; } = string.Empty;
-    }
 
+        public ICollection<CarritoComprasNuevo>? CarritoComprasNuevos { get; set; }
+    }
 }
