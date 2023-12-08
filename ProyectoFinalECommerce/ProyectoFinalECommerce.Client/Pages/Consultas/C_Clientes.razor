@@ -1,8 +1,9 @@
-﻿@*@page "/consultaClientes"
+﻿@page "/consultaClientes"
 
 @inject HttpClient httpClient
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveAuto
+
+@rendermode InteractiveServer
 
 @attribute [Authorize(Roles ="Admin")]
 
@@ -38,9 +39,33 @@
                 <div class="row">
 
                     <div class="col">
-                        <label>Buscar por Id</label>
-                        <InputNumber class="form-control" @bind-Value="clienteId" aria-placeholder="BusquedaId"> </InputNumber>
-                    </div>
+                        <label>Campo</label>
+                        <InputSelect @bind-Value="opcFiltrado" class="form-select">
+                            <option valie="0" disabled selected>Seleccione</option>
+                            <option value="1">Busqueda por ID</option>
+                            <option value="2">Busqueda por Nombre</option>
+                            <option value="3">Busqueda por Apellido</option>
+                        </InputSelect>
+                     </div>
+
+                    <div class="col">
+                        <label>Filtrar</label>
+                        @switch (opcFiltrado)
+                        {
+                            case 1:
+                                <InputNumber class="form-control" @bind-Value="cliente.ClienteId"></InputNumber>
+                                Conteo = 0;
+                            break;
+
+                            case 2:
+                                <InputText class="form-control" @bind-Value="cliente.Nombre"></InputText>
+                            break;
+
+                            case 3:
+                                <InputText class="form-control" @bind-Value="cliente.Apellido"></InputText>
+                            break;
+                        }
+                     </div>
 
                     <div class="col">
                         <button type="button" class="btn btn-outline-primary" @onclick="Buscar"> <i class="oi oi-reload"> Buscar</i></button>
@@ -101,7 +126,7 @@
 
 @code
 {
-    public List<ApplicationUser> clientes { get; set; } = new List<Clientes>();
+    public List<Clientes> clientes { get; set; } = new List<Clientes>();
     public int Conteo { get; set; }
 
     public DateTime Desde { get; set; }
@@ -110,8 +135,13 @@
 
     public int clienteId { get; set; }
 
+    public int opcFiltrado { get; set; }
+
+    public Clientes cliente { get; set; } = new Clientes();
+
     protected override async Task OnInitializedAsync()
     {
+        Desde = DateTime.Now.AddYears(-75);
         Hasta = DateTime.Now.AddYears(-17);
     }
 
@@ -119,16 +149,54 @@
     {
         clientes = await httpClient.GetFromJsonAsync<List<Clientes>>($"api/Clientes");
 
-        if (Desde != default && Hasta != default)
+
+        if(Desde != default && Hasta != default)
         {
             clientes = clientes.Where(c => c.FechaNacimiento >= Desde.Date && c.FechaNacimiento <= Hasta).ToList();
         }
-        if (clienteId > 0)
+        switch (opcFiltrado)
         {
-            clientes = clientes.Where(c => c.ClienteId == clienteId).ToList();
+            case 1:
+                if (Desde != default && Hasta != default)
+                {
+                    clientes = clientes.Where(c => c.FechaNacimiento >= Desde.Date && c.FechaNacimiento <= Hasta).ToList();
+                }
+
+                if(cliente.ClienteId > 0)
+                {
+                    clientes = clientes.Where(c => c.ClienteId == cliente.ClienteId).ToList();
+                }
+
+                break;
+
+            case 2:
+                if (Desde != default && Hasta != default)
+                {
+                    clientes = clientes.Where(c => c.FechaNacimiento >= Desde.Date && c.FechaNacimiento <= Hasta).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(cliente.Nombre))
+                {
+                    clientes = clientes.Where(c => c.Nombre.ToLower().Contains(cliente.Nombre.ToLower())).ToList();
+                }
+
+
+                break;
+            case 3:
+                if (Desde != default && Hasta != default)
+                {
+                    clientes = clientes.Where(c => c.FechaNacimiento >= Desde.Date && c.FechaNacimiento <= Hasta).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(cliente.Apellido))
+                {
+                    clientes = clientes.Where(c => c.Apellido.ToLower().Contains(cliente.Apellido.ToLower())).ToList();
+                }
+                break;
         }
+
 
         Conteo = clientes != null ? clientes.Count : 0;
         StateHasChanged();
     }
-}*@
+}

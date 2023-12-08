@@ -30,6 +30,12 @@
             </NavLink>
         </div>
 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="CatalogoNuevo">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Cat&aacute;logo Nuevo
+            </NavLink>
+        </div>
+
         <hr />
         <div class="nav-item px-3">
             @foreach(var categoria in ServicioCategoria.L_Categorias)
@@ -49,10 +55,22 @@
 
         <AuthorizeView  Roles="Admin">
             <Authorized>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="registroClientes">
+                        <span class="bi bi-person" aria-hidden="true"></span> Registro de clientes
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="consultaClientes">
+                        <span class="bi bi-person" aria-hidden="true"></span> Consulta de clientes
+                    </NavLink>
+                </div>
                  
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/ConsultaUsuarios">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Consulta de usuarios
+                        <span class="bi bi-person" aria-hidden="true"></span> Consulta de usuarios
                     </NavLink>
                 </div>
 
@@ -66,6 +84,12 @@
                  <div class="nav-item px-3">
                     <NavLink class="nav-link" href="R_Producto">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registros productos
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="registroProductosC">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registros productos Nuevo
                     </NavLink>
                 </div>
             </Authorized>
