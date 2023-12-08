@@ -10,7 +10,7 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioProducto
         private readonly HttpClient httpClient;
 
         public List<Productos> productos { get; set; } = new List<Productos>();
-        public Productos producto { get; set; } = new Productos();
+        
 
 
         public ServicioProducto(HttpClient httpClient)
