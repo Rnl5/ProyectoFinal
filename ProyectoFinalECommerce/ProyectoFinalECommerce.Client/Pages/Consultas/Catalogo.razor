@@ -4,47 +4,50 @@
 @inject IServicioProducto ServicioProducto
 @inject IServicioCategoria ServicioCategoria
 
-<div class="productos">
+<div class="catalagos">
+    <div class="container">
+        <div class="row">
+            @foreach (var item in CategoriaId == null ? ServicioProducto.productos : ServicioProducto.productos.Where(p => p.CategoriaId == CategoriaId))
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="img-container">
+                            @if (item.Foto != null)
+                            {
+                                var base64 = Convert.ToBase64String(item.Foto);
+                                var imgSrc = $"data:image/jpeg;base64,{base64}";
 
-    @foreach (var item in CategoriaId == null ? ServicioProducto.productos : ServicioProducto.productos.Where(p => p.CategoriaId == CategoriaId))
-    {
-        <div class="card col-3 item-card">
-            <div class="img-container">
-                @if (item.Foto != null)
-                {
-                    var base64 = Convert.ToBase64String(item.Foto);
-                    var imgSrc = $"data:image/jpeg;base64,{base64}";
+                                <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" height="275" width="300" />
 
-                    <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" width="300" />
-                    
-                }
-            </div>
-
-            <div class="card-body">
-
-                <div class="mb-3">
-                    <strong>Nombre:</strong> @item.Nombre
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h6><strong>Nombre:</strong></h6>
+                            <div class="mb-3">
+                                @item.Nombre
+                            </div>
+                            <h6><strong>Descripción:</strong></h6>
+                            <div class="mb-3">
+                                @item.Descripcion
+                            </div>
+                            <h6><strong>Precio:</strong></h6>
+                            <div class="mb-3">
+                                RD$ @item.Precio
+                            </div>
+                            <a href="/detallesProducto/@item.ProductoId"><button type="button" class="btn btn-info">Ver mas</button></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <strong>Descripción:</strong> @item.Descripcion
-                </div>
-                <div class="mb-3">
-                    <strong>Precio:</strong> $@item.Precio
-                </div>
-                <a href="/detallesProducto/@item.ProductoId"><button type="button" class="btn btn-info">Ver mas</button></a>
-            </div>
-
-            
+            }
         </div>
-    }
+    </div>
 </div>
+   
 
 @code 
 {
     [Parameter]
     public int? CategoriaId { get; set; } = null;
-
-
 
     protected override async Task OnInitializedAsync()
     {
