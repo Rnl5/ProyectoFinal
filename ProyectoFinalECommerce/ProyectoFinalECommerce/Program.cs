@@ -8,6 +8,7 @@ using ProyectoFinalECommerce.Client.Services.ServicioProducto;
 using ProyectoFinalECommerce.Components;
 using ProyectoFinalECommerce.Components.Account;
 using ProyectoFinalECommerce.Data;
+using ProyectoFinalECommerce.Servicios.ServicioProductoNuevo;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAu
 
 builder.Services.AddScoped<IServicioCategoria, ServicioCategoria>();
 builder.Services.AddScoped<IServicioProducto, ServicioProducto>();
+builder.Services.AddScoped<IServicioProductoNuevo, ServicioProductoNuevo>();     
 
 builder.Services.AddAuthentication(options =>
     {
