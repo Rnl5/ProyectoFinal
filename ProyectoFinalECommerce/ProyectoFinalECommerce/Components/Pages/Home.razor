@@ -5,21 +5,51 @@
 
 @inject IServicioCategoria ServicioCategoria
 
-
-
 <PageTitle>Home</PageTitle>
 
-@if(categoria != null)
-{
-    <h1>Bienvenido a la seccion de @categoria.Nombre</h1>
-    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo CategoriaId = "@categoria.CategoriaId"/>
-}
 
-else
-{
-    <h1>Bienvenido a la tienda del hogar macorisano</h1>
-    <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo />
-}
+        @if (categoria != null)
+        {
+            <h2>Bienvenido a la seccion de @categoria.Nombre del Hogar Macorisano</h2>
+            <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo CategoriaId = "@categoria.CategoriaId"/>
+        }
+
+        else
+        {
+            <h1>Bienvenido a la tienda del hogar macorisano</h1>
+
+        <h4>El Hogar Macorisano: Tu Destino para Productos de Calidad.</h4>
+        <p>
+        En la fantastica ciudad de San Francisco de Macoris, se rige con elegancia 
+        "El Hogar Macorisano", una tienda que se ha ganado la confianza y 
+        lealtad de la comunidad local gracias a su compromiso con la calidad y 
+        variedad de productos para el hogar. Desde electrodomésticos hasta 
+        artículos decorativos, esta tienda es un verdadero paraíso para 
+        aquellos que buscan mejorar su espacio vital.
+        </p>
+        <br />
+        <h4>Catálogo: Un Mundo de Opciones a tu Alcance</h4>
+        <p>
+        Una de las joyas de El Hogar Macorisano es su catálogo, una experiencia 
+        de compra en línea que permite a los clientes explorar una amplia gama de 
+        productos desde la comodidad de sus hogares. Con solo unos clics, los 
+        visitantes pueden sumergirse en un océano de opciones dividido hábilmente 
+        en categorías para facilitar la búsqueda del producto deseado.
+        </p>
+        <br />
+
+    <h4>El Hogar Macorisano, Mucho Más que una Tienda</h4>
+
+    <p>
+        En resumen, El Hogar Macorisano no es solo una tienda; es una 
+        experiencia. Espero que disfrute de su estancia.
+    </p>
+    <br />
+    <h5>Aqui est&aacute; el catalogo de todos nuestros productos:</h5>
+    <br />
+
+            <ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo></ProyectoFinalECommerce.Client.Pages.Consultas.Catalogo>
+        }
 
 
 @code
@@ -51,4 +81,210 @@ else
             categoria = null;
         }
     }
+} 
+
+
+
+@* @page "/"
+
+
+@rendermode InteractiveServer
+
+@if(productos is null)
+{
+    <div class="spinner"></div>
 }
+else
+{
+    <div class="mb-2">
+        <div>
+            <input type="text" class="form-control" id="titulo" placeholder="Buscar producto ..." @bind-value="Filtro" />
+        </div>
+
+        <div class="mx-1">
+            <button type="button" class="btn btn-outline-primary" @onclick="AplicarFiltroAsync">Filtrar</button>
+            <button type="button" class="btnav btn-outline-danger" @onclick="LimpiarFiltroAsync">Limpiar</button>
+        </div>
+
+        <AuthorizeView>
+            <Authorized>
+                @if(contador > 0)
+                {
+                    <a href="/mostraCarrito" class="btn btn-primary">Ver carro de compras (@contador)</a>
+                }
+            </Authorized>
+        </AuthorizeView>
+    </div>
+
+    <div class ="row row-cols-1 row-cols-md-4 g-4 mt-1">
+        @foreach(var producto in productos!)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="text-center zoom">
+                        <img src="@producto.Foto" class="text-center" alt="@producto.Nombre" />
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title text-navy">@producto.Nombre</h5>
+                        <p class="card-text smfnt">@producto.Descripcion</p>
+                        <h5 class="text-muted">@($"{producto.PrecioOriginal:C2}")</h5>
+                    </div>
+
+                    <div class="card-footer text-center">
+                        <a href="detallesProducto/@producto.ProductoNuevoId" class="btn btn-sm btn-secondary">Detalles</a>
+                        <button class="btn btn-outline-primary" @onclick="@(() => AgregarAlCarritoAsync(producto.ProductoNuevoId))">Agregar al carrito</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@inject HttpClient httpClient
+
+
+
+
+
+
+
+
+
+
+
+
+
+@code
+{
+    private int paginaActual = 1;
+    private int paginasTotales;
+
+    private int contador = 0;
+
+    private bool estaAutenticado;
+
+    public List<ProductosNuevo> productos { get; set; } = new List<ProductosNuevo>();
+
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Pagina { get; set; } = "";
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string Filtro { get; set; } = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //await CargarAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await CheckIsAuthenticatedAsync();
+        await CargarContadorAsync();
+    }
+
+
+
+    private async Task CheckIsAuthenticatedAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+        estaAutenticado = authenticationState.User.Identity!.IsAuthenticated;
+    }
+
+    private async Task CargarContadorAsync()
+    {
+        if(!estaAutenticado)
+        {
+            return;
+        }
+
+        var response = await httpClient.GetFromJsonAsync<int>("api/CarritoComprasNuevo/count");
+
+
+        contador = response;
+    }
+
+    private async Task PaginaSeleccionadaAsync(int pagina)
+    {
+        paginaActual = pagina;
+        await CargarAsync();
+    }
+
+    private async Task CargarAsync(int pagina = 1)
+    {
+        // if (!string.IsNullOrWhiteSpace(Pagina))
+        // {
+        //     pagina = Convert.ToInt32(Pagina);
+        // }
+
+        // string url1 = string.Empty;
+        // string url2 = string.Empty;
+
+        // if (string.IsNullOrEmpty(Filtro))
+        // {
+        //     url1 = $"api/products?page={pagina}&RecordsNumber=8";
+        //     url2 = $"api/products/totalPages/?RecordsNumber=8";
+        // }
+        // else
+        // {
+        //     url1 = $"api/products?page={pagina}&filter={Filtro}&RecordsNumber=8";
+        //     url2 = $"api/products/totalPages?filter={Filtro}&RecordsNumber=8";
+        // }
+
+        // try
+        // {
+        //     var responseHppt = await repository.Get<List<ProductosNuevo>>(url1);
+        //     var responseHppt2 = await repository.Get<int>(url2);
+        //     productos = responseHppt.Response!;
+        //     paginasTotales = responseHppt2.Response!;
+        // }
+        // catch (Exception ex)
+        // {
+        //     await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        // }
+
+    }
+
+    private async Task LimpiarFiltroAsync()
+    {
+        Filtro = string.Empty;
+        await AplicarFiltroAsync();
+    }
+
+    private async Task AplicarFiltroAsync()
+    {
+        int pagina = 1;
+        await CargarAsync(pagina);
+        await PaginaSeleccionadaAsync(pagina);
+    }
+
+    private async Task AgregarAlCarritoAsync(int productoId)
+    {
+        if (!estaAutenticado)
+        {
+            //navigationManager.NavigateTo("/Login");
+
+            //y un mensaje de que debes de iniciar sesion antes
+            return;
+        }
+
+        var carritoCompraDTO = new CarritoComprasNuevoDTO
+            {
+                ProductoNuevoId = productoId
+            };
+
+            var httpResponse = await httpClient.PostAsJsonAsync("api/CarritoComprasNuevo", carritoCompraDTO);
+
+            await CargarContadorAsync();
+
+            //mensaje de que se agrego el producto al carrito
+    }
+
+} *@
