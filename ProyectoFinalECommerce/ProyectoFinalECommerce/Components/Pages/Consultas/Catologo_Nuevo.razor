@@ -1,0 +1,49 @@
+﻿@page "/CatalogoNuevo"
+
+@inject IServicioProductoNuevo ServicioProductoNuevo
+
+
+<div>
+
+    @foreach (var item in CategoriaId == null ? ServicioProductoNuevo.productoNuevo : ServicioProductoNuevo.productoNuevo.Where(p => p.CategoriaId == CategoriaId))
+    {
+        <div class="card col-3 item-card">
+            <div class="img-container">
+                @if(item.Foto != null)
+                {
+                    var base64 = Convert.ToBase64String(item.Foto);
+                    var imgSrc = $"data:image/jpeg;base64,{base64}";
+
+                    <img src="@imgSrc" alt="Imagen del producto nuevo" class="item-imagen" width="275" />
+                }
+            </div>
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <strong>Nombre:</strong> @item.Nombre
+                </div>
+                <div class="mb-3">
+                    <strong>Descripción:</strong> @item.Descripcion
+                </div>
+                <div class="mb-3">
+                    <strong>Precio:</strong> $@item.PrecioOriginal
+                </div>
+                <a href="/detallesProducto/@item.ProductoNuevoId"><button type="button" class="btn btn-info">Ver mas</button></a>
+            </div>
+
+        </div>
+    }
+</div>
+
+
+@code 
+{
+
+    public int? CategoriaId { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ServicioProductoNuevo.CargarProductosNuevo("api/ProductosNuevoes");
+    }
+
+}

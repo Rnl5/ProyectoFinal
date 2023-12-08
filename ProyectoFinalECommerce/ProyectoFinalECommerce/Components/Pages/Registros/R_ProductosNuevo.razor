@@ -1,0 +1,204 @@
+﻿@page "/registroProductosC"
+
+@inject HttpClient httpClient
+@inject NotificationService notificationService
+
+@rendermode InteractiveServer
+<RadzenNotification />
+<EditForm Model="productoNuevo" OnValidSubmit="Guardar" FormName="registroProductosC">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Registro de productos</h2>
+            </div>
+
+            <div class="card-body">
+                <div class="col">
+                    <label>Producto Id:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber class="form-control" @bind-Value="ProductoNuevoId"></InputNumber>
+                        <button type="button" class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Fecha de ingreso:</label>
+                        <div class="input-group mb-3">
+                            <InputDate @bind-Value="productoNuevo.Fecha" class="form-control"></InputDate>
+                            <ValidationMessage For="@(() => productoNuevo.Fecha)"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label>Nombre:</label>
+                        <div class="input-group mb-3">
+                            <InputText class="form-control" @bind-Value="productoNuevo.Nombre"></InputText>
+                            <ValidationMessage For="@(() => productoNuevo.Nombre)"></ValidationMessage>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <label>Descripci&oacute;n</label>
+                        <div class="input-group mb-3">
+                            <InputTextArea class="form-control" @bind-Value="productoNuevo.Descripcion"></InputTextArea>
+                            <ValidationMessage For="@(() => productoNuevo.Descripcion)"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Precio:</label>
+                        <div class="input-group mb-3">
+                            <InputNumber class="form-control" @bind-Value="productoNuevo.PrecioOriginal"></InputNumber>
+                            <ValidationMessage For="@(() => productoNuevo.PrecioOriginal)"></ValidationMessage>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <label>Precio de oferta (opcional):</label>
+                        <div class="input-group mb-3">
+                            <InputNumber class="form-control" @bind-Value="productoNuevo.PrecioOferta"></InputNumber>
+                            <ValidationMessage For="@(() => productoNuevo.PrecioOferta)"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-3">
+                        <label>Categorias:</label>
+                        <div class="input-group mb-3">
+                            <InputSelect class="form-select" @bind-Value="productoNuevo.CategoriaId">
+                                <option value="0" disabled selected>Seleccione la categoria</option>
+                                @foreach (var categoria in L_Categorias)
+                                {
+                                    <option value="@categoria.CategoriaId">@categoria.Nombre</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <label>Foto del producto:</label>
+                        <div class="input-group mb-3">
+                            <InputFile OnChange="CargarImagen" class="form-control" accept=".png, .jpg, .jpeg"></InputFile>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer d-flex justify-content-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="bi bi-file-earmark" /></button>
+                        <button type="submit" class="btn btn-outline-success">Guardar <i class="bi bi-file-earmark-check-fill" /></button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code 
+{
+    [Parameter]
+    public int ProductoNuevoId { get; set; }
+
+    [SupplyParameterFromForm]
+    public ProductosNuevo productoNuevo { get; set; } = new ProductosNuevo();
+
+    public IEnumerable<Categorias> L_Categorias { get; set; } = Enumerable.Empty<Categorias>();
+
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarCategorias();
+        if (ProductoNuevoId > 0)
+        {
+            productoNuevo.ProductoNuevoId = ProductoNuevoId;
+            await Buscar();
+
+        }
+    }
+
+    private async Task CargarCategorias()
+    {
+        var categoriaEncontrada = await httpClient.GetFromJsonAsync<IEnumerable<Categorias>>("api/Categorias");
+
+        if(categoriaEncontrada != null)
+        {
+            L_Categorias = categoriaEncontrada;
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var productoEncontrado = await httpClient.GetFromJsonAsync<ProductosNuevo>($"api/ProductosNuevoes/{ProductoNuevoId}");
+
+        if(productoEncontrado != null)
+        {
+            productoNuevo = productoEncontrado;
+            StateHasChanged();
+        }
+        else
+        {
+            //error al buscar
+            return;
+        }
+    }
+
+    public async void Guardar()
+    {
+        using var response = await httpClient.PostAsJsonAsync("api/ProductosNuevoes", productoNuevo);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var productoDevuelto = await response.Content.ReadFromJsonAsync<ProductosNuevo>();
+
+        if(productoDevuelto is not null)
+        {
+            productoNuevo = productoDevuelto;
+            StateHasChanged();
+            Nuevo();
+        }
+    }
+
+    public void Nuevo()
+    {
+        this.productoNuevo = new ProductosNuevo();
+    }
+
+    public async Task Eliminar()
+    {
+        using var response = await httpClient.DeleteAsync($"api/ProductosNuevoes/{productoNuevo.ProductoNuevoId}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task CargarImagen(InputFileChangeEventArgs e)
+    {
+        var archivo = e.File;
+        var buffer = new byte[archivo.Size];
+
+        await archivo.OpenReadStream().ReadAsync(buffer);
+        productoNuevo.Foto = buffer;
+    }
+}
