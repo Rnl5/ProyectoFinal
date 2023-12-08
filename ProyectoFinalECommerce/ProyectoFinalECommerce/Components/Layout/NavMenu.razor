@@ -6,8 +6,6 @@
 @inject HttpClient httpClient
 
 
-@attribute [Authorize]
-
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ProyectoFinalECommerce</a>
@@ -24,17 +22,18 @@
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
+        @* <div class="nav-item px-3">
             <NavLink class="nav-link" href="Catalogo">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Cat&aacute;logo
             </NavLink>
         </div>
+        *@
 
-        <div class="nav-item px-3">
+        @* <div class="nav-item px-3">
             <NavLink class="nav-link" href="CatalogoNuevo">
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Cat&aacute;logo Nuevo
             </NavLink>
-        </div>
+        </div> *@
 
         <hr />
         <div class="nav-item px-3">
@@ -47,12 +46,17 @@
         </div>
         <hr />
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="carritoComprasV">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Carrito
-            </NavLink>
-        </div>
+        @* <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="carritoComprasV">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Carrito
+                    </NavLink>
+                </div>
+            </Authorized>
 
+        </AuthorizeView>
+ *@
         <AuthorizeView  Roles="Admin">
             <Authorized>
 
@@ -87,11 +91,11 @@
                     </NavLink>
                 </div>
 
-                <div class="nav-item px-3">
+                @* <div class="nav-item px-3">
                     <NavLink class="nav-link" href="registroProductosC">
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Registros productos Nuevo
                     </NavLink>
-                </div>
+                </div> *@
             </Authorized>
         </AuthorizeView>
         
