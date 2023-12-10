@@ -200,7 +200,6 @@
         if (Input.NuevoNombre is null || Input.NuevoNombre == nombre)
         {
             message = "Su nombre no ha cambiado.";
-            return;
         }
         else
         {
@@ -209,13 +208,11 @@
             await UserManager.UpdateAsync(user);
 
             message = "Su nombre ha sido actualizado correctamente.";
-            return;
         }
 
         if (Input.NuevoApellido is null || Input.NuevoApellido == apellido)
         {
             message = "Su apellido no ha cambiado.";
-            return;
         }
         else
         {
@@ -224,12 +221,11 @@
             await UserManager.UpdateAsync(user);
 
             message = "Su apellido ha sido actualizado correctamente.";
-            return;
+
         }
         if (Input.NuevaFechaN == null || Input.NuevaFechaN == FechaN)
         {
             message = "Su fecha de nacimiento no ha cambiado.";
-            return;
         }
         else
         {
@@ -238,12 +234,10 @@
             await UserManager.UpdateAsync(user);
 
             message = "Su fecha de nacimiento ha sido actualizada correctamente";
-            return;
         }
         if (Input.NuevoNumCedula is null || Input.NuevoNumCedula == numCedula)
         {
             message = "Su numero de cedula no ha cambiado.";
-            return;
         }
         else
         {
@@ -252,8 +246,8 @@
             await UserManager.UpdateAsync(user);
 
             message = "Su numero de cedula ha sido actualizado correctamente";
-            return;
         }
+        message = "Sus datos han sido actualizados";
     }
 
     private sealed class InputModel
