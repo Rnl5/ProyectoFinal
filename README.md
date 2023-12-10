@@ -3,8 +3,14 @@
 En la fantastica ciudad de San Francisco de Macoris, se rige con elegancia "El Hogar Macorisano", una tienda que se ha ganado la confianza y lealtad de la comunidad local gracias a su compromiso con la calidad y variedad de productos para el hogar. Desde electrodomésticos hasta artículos decorativos, esta tienda es un verdadero paraíso para aquellos que buscan mejorar su espacio vital.
 
 Una de las joyas de El Hogar Macorisano es su catálogo, una experiencia de compra en línea que permite a los clientes explorar una amplia gama de productos desde la comodidad de sus hogares. Con solo unos clics, los visitantes pueden sumergirse en un océano de opciones dividido hábilmente en categorías para facilitar la búsqueda del producto deseado.
-
 #
+
+# Usuario y clave
+Usuario: admin@gmail.com
+
+Clave: Admin123#
+
+
 # Home
 En este apartado observará una bienvenida al sistema del Hogar macorisano, dando a conocer lo que contendrá este sistema.
 
