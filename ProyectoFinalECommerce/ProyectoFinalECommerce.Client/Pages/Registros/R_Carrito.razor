@@ -1,10 +1,107 @@
 ﻿@page "/carritoCompras"
 
 @inject IServicioCarrito ServicioCarrito
+@inject HttpClient httpClient
+@inject NotificationService notificationService
+@inject ISessionStorageService SessionStorageService
+@inject IServicioProducto ServicioProducto
 
 <h3>Carrito de compras</h3>
 
-@if(objetosCarrito != null)
+
+<div class="col-sm-8">
+    <div class="card mb-3">
+        <div class ="card-header d-flex justify-content-between align-items-center">
+            <h3>Su carrito de compras</h3>
+
+            <div>
+                <a class="btn btn-outline-dark flex-lg-shrink-0" href="registroProductos">
+                    <i class="bi bi-arrow-thick-left">Volver</i>
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm bg-light table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width:102px"></th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (productosEnCarrito.Any())
+                        {
+                            foreach(var producto in productosEnCarrito)
+                            {
+                                <tr>
+                                    <td valign="middle">
+                                        <div class="img-container">
+                                            @if(productoEnCarrito.Imagen != null)
+                                            {
+                                                var base64 = Convert.ToBase64String(producto.Imagen);
+                                                var imgSrc = $"data:image/jpeg;base64,{base64}";
+
+                                                <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" width="300" />
+                                            }
+                                        </div>
+                                    </td>
+                                    <td valign="middle">@producto.NombreProducto</td>
+                                    <td valign="middle">RD$ @producto.Precio</td>
+                                    <td valign="middle" align="center">
+                                        <InputNumber @bind-Value="producto.Cantidad" style="width: 70px" class="form-control"></InputNumber>
+                                    </td>
+                                    <td valign="middle">RD$ @(producto.Cantidad * producto.Precio)</td>
+                                    <td valign="middle">
+                                        <button type="button" class="btn btn-outline-dark" @onclick="(() => Eliminar(producto))"><i class="bi bi-trash3"></i></button>
+                                    </td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td colspan="6">
+                                    <div>
+                                        Total: RD$ @productosEnCarrito.Sum(producto => producto.Cantidad * producto.Precio)
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6">
+                                    <div class="alert alert-warning" role="alert">
+                                        No hay productos en el carrito
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-center mb-4 mt-4">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-success" @onclick="RealizarPedido">
+                        Realizar pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@* @if(objetosCarrito != null)
 {
     <table class="table">
         <thead>
@@ -31,15 +128,70 @@
 else
 {
     <p>El carrito de compras se encuentra vacio</p>
-}
+} *@
 
 @code 
 {
+    public ProductosCarrito productoEnCarrito = new ProductosCarrito { Cantidad = 1 };
+
+
+    List<ProductosCarrito> productosEnCarrito = new List<ProductosCarrito>();
+
     private IEnumerable<Carrito> objetosCarrito;
 
     protected override async Task OnInitializedAsync()
     {
-        objetosCarrito = await ServicioCarrito.GetCarrito();
+        productosEnCarrito = await ObtenerProductosCarrito();
+    }
+
+    public async Task<List<ProductosCarrito>> ObtenerProductosCarrito()
+    {
+        var resultado = new List<ProductosCarrito>();
+
+        var carrito = await SessionStorageService.GetItemAsync<List<Productos>>("carritoCompras");
+
+        if (carrito == null)
+        {
+            return resultado;
+        }
+
+        foreach (var producto in carrito)
+        {
+            var articulo = await ServicioProducto.ObtenerProductos(producto.ProductoId);
+
+            var articloEnCarrito = new ProductosCarrito
+                {
+                    ProductoId = articulo.ProductoId,
+                    NombreProducto = articulo.Nombre,
+                    Precio = articulo.Precio,
+                    Imagen = articulo.Foto,
+                };
+            resultado.Add(articloEnCarrito);
+        }
+
+        return resultado;
+
+    }
+
+    private async Task Eliminar(ProductosCarrito producto)
+    {
+        await ServicioCarrito.EliminarArticulo(producto);
+
+        productosEnCarrito = await ObtenerProductosCarrito();
+    }
+
+    public async Task RealizarPedido()
+    {
+        var mensaje = new NotificationMessage
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = "Pedido realizado",
+            Detail = "Su pedido se ha realizado con exito",
+            Duration = 4_000
+        };
+        notificationService.Notify(mensaje);
+
+        productosEnCarrito = new List<ProductosCarrito>();
     }
 
 }

@@ -1,6 +1,8 @@
 ﻿@page "/detallesProducto/{ProductoId}"
 
 @inject IServicioProducto ServicioProducto
+@inject ISessionStorageService SessionStorageService
+@inject IServicioCarrito ServicioCarrito
 @inject HttpClient httpClient
 @inject NotificationService notificationService
 
@@ -34,7 +36,7 @@
                         RD$ @producto.Precio
                     </h4>
 
-                    <a href="/carritoCompras"><button @onclick="AgregarCarrito" class="btn btn-outline-primary"><i class="bi bi-cart"></i> Agregar al carrito</button> </a>
+                    <a href="carritoCompras"><button @onclick="() => AgregarCarrito()" class="btn btn-outline-primary"><i class="bi bi-cart"></i> Agregar al carrito</button> </a>
                 </div>
             </div>
         </div>
@@ -44,15 +46,13 @@
 
 
 @code 
-
 {
     public Productos producto { get; set; }
 
     [Parameter]
     public string ProductoId { get; set; }
 
-    [Inject]
-    public IServicioCarrito ServicioCarrito { get; set; }
+
 
     public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
 
@@ -64,29 +64,15 @@
         }
 
         producto = ServicioProducto.productos.FirstOrDefault(p => p.ProductoId == Int32.Parse(ProductoId));
+
+
     }
 
-
-    public void AgregarCarrito()
+    public async Task AgregarCarrito()
     {
-        var objetoNuevo = new Carrito
+        if(producto != null)
         {
-          ProductoId = 1,
-          Nombre = "Este es el producto de ejemplo",
-          Precio = 2490,
-          Cantidad = 1
-        };
-
-        ServicioCarrito.AgregarCarrito(objetoNuevo);
-
-        Mensaje = new NotificationMessage
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "Ha agregado el producto al carrito",
-                Detail = $"El producto {producto.Nombre} ha sido agregado al carrito",
-                Duration = 5_000
-            };
-        notificationService.Notify(Mensaje);
-        return;
+            await ServicioCarrito.AgregarAlCarrito(producto);
+        }
     }
 }

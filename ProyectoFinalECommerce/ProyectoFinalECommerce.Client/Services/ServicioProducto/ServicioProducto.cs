@@ -22,5 +22,10 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioProducto
         {
             productos = await httpClient.GetFromJsonAsync<List<Productos>>(ruta);
         }
+
+        public async Task<Productos> ObtenerProductos(int productoId)
+        {
+            return await httpClient.GetFromJsonAsync<Productos>($"api/Productos/{productoId}");
+        }
     }
 }

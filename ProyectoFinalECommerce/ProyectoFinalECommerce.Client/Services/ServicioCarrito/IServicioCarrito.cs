@@ -4,8 +4,14 @@ namespace ProyectoFinalECommerce.Client.Services.ServicioCarrito
 {
     public interface IServicioCarrito
     {
-        Task<IEnumerable<Carrito>> GetCarrito();
+        event Action OnChange;
 
-        void AgregarCarrito(Carrito objeto);
+        Task AgregarAlCarrito(Productos producto);
+
+        Task<List<ProductosCarrito>> ObtenerArticulosEnCarrito();
+
+        Task EliminarArticulo(ProductosCarrito articulo);
+
+        Task Guardar(ProductosCarrito articulo);
     }
 }
