@@ -11,8 +11,8 @@ using ProyectoFinalECommerce.Data;
 namespace ProyectoFinalECommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231128030553_Inicial")]
-    partial class Inicial
+    [Migration("20231205145833_Eliminando propiedad al modelo Categorias")]
+    partial class EliminandopropiedadalmodeloCategorias
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,10 @@ namespace ProyectoFinalECommerce.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -167,10 +171,17 @@ namespace ProyectoFinalECommerce.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -179,6 +190,10 @@ namespace ProyectoFinalECommerce.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NumeroCedula")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -200,6 +215,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -210,6 +228,45 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Categorias", b =>
+                {
+                    b.Property<int>("CategoriaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoriaId");
+
+                    b.ToTable("Categorias");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoriaId = 1,
+                            Nombre = "Electrodomesticos",
+                            Url = "electrodomesticos"
+                        },
+                        new
+                        {
+                            CategoriaId = 2,
+                            Nombre = "Productos del Hogar",
+                            Url = "productosDelHogar"
+                        },
+                        new
+                        {
+                            CategoriaId = 3,
+                            Nombre = "Televisores",
+                            Url = "televisores"
+                        });
                 });
 
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.Clientes", b =>
@@ -271,9 +328,18 @@ namespace ProyectoFinalECommerce.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("EsPublico")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EstaBorrado")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
@@ -287,6 +353,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PrecioOriginal")
                         .HasColumnType("REAL");
 
                     b.HasKey("ProductoId");

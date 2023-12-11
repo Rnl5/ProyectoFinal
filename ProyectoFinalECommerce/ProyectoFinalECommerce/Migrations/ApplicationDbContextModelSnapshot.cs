@@ -153,6 +153,10 @@ namespace ProyectoFinalECommerce.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -164,10 +168,17 @@ namespace ProyectoFinalECommerce.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -176,6 +187,10 @@ namespace ProyectoFinalECommerce.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NumeroCedula")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
@@ -197,6 +212,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -207,6 +225,113 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Entidades.CarritoComprasNuevo", b =>
+                {
+                    b.Property<int>("CarritoComprasNuevoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Observaciones")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductoNuevoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductosNuevoProductoNuevoId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CarritoComprasNuevoId");
+
+                    b.HasIndex("ProductosNuevoProductoNuevoId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CarritoComprasNuevos");
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Entidades.ProductosNuevo", b =>
+                {
+                    b.Property<int>("ProductoNuevoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Foto")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PrecioOferta")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PrecioOriginal")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ProductoNuevoId");
+
+                    b.ToTable("ProductosNuevos");
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Carrito", b =>
+                {
+                    b.Property<int>("CarritoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CarritoId");
+
+                    b.ToTable("Carrito");
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Shared.Categorias", b =>
+                {
+                    b.Property<int>("CategoriaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CategoriaId");
+
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.Clientes", b =>
@@ -268,6 +393,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -284,6 +412,9 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PrecioOriginal")
                         .HasColumnType("REAL");
 
                     b.HasKey("ProductoId");
@@ -379,6 +510,23 @@ namespace ProyectoFinalECommerce.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProyectoFinalECommerce.Entidades.CarritoComprasNuevo", b =>
+                {
+                    b.HasOne("ProyectoFinalECommerce.Entidades.ProductosNuevo", "ProductosNuevo")
+                        .WithMany("CarritoComprasNuevos")
+                        .HasForeignKey("ProductosNuevoProductoNuevoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoFinalECommerce.Data.ApplicationUser", "User")
+                        .WithMany("CarritoComprasNuevos")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("ProductosNuevo");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.ClientesDetalle", b =>
                 {
                     b.HasOne("ProyectoFinalECommerce.Shared.Clientes", null)
@@ -386,6 +534,16 @@ namespace ProyectoFinalECommerce.Migrations
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("CarritoComprasNuevos");
+                });
+
+            modelBuilder.Entity("ProyectoFinalECommerce.Entidades.ProductosNuevo", b =>
+                {
+                    b.Navigation("CarritoComprasNuevos");
                 });
 
             modelBuilder.Entity("ProyectoFinalECommerce.Shared.Clientes", b =>

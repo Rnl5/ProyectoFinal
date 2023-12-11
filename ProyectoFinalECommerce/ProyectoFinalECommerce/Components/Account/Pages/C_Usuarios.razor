@@ -1,0 +1,104 @@
+﻿@page "/Account/ConsultaUsuarios"
+@using Microsoft.AspNetCore.Authorization
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using ProyectoFinalECommerce.Data
+
+@attribute [Authorize(Roles = "Admin")]
+
+
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IdentityUserAccessor UserAccessor
+@inject HttpClient httpClient
+
+
+
+@using Microsoft.AspNetCore.Authorization
+
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Admin")]
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Consulta de usuarios</h3>
+                </div>
+
+                <div class="card-body">
+                    
+                    <div class="row">
+                        <div class="col">
+                            @if(usuario is not null)
+                            {
+                                <table class="table table-striped table-hover" >
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Apellido</th>
+                                            <th>Correo electr&oacute;nico</th>
+                                            <th>Fecha de nacimiento</th>
+                                            <th>N&uacute;mero de cedula</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach(var user in usuario)
+                                        {
+                                            <tr>
+                                                <td>@user.Nombre</td>
+                                                <td>@user.Apellido</td>
+                                                <td>@user.Email</td>
+                                                <td>@user.FechaNacimiento.ToString("dd/MM/yyyy")</td>
+                                                <td>@user.NumeroCedula</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="form-row justify-content-sm-between" aria-orientation="vertical">
+                        <div class="col-3">
+                            <label for="cantidadFilas" class="col-form-label"><strong>Num. Filas</strong>&nbsp;</label>
+                            <input id="cantidadFilas" class="form-control" @bind-value ="@conteo" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </Authorized>
+
+</AuthorizeView>
+
+@code
+{
+    private List<ApplicationUser> usuario { get; set; } = new List<ApplicationUser>();
+
+    public int conteo { get; set; }
+
+    [CascadingParameter]
+    private HttpContext httpContext { get; set; } = default!;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var usuarios = UserManager.Users.ToList();
+
+        usuario.AddRange(usuarios);
+
+        conteo = usuario.Count;
+    }
+}

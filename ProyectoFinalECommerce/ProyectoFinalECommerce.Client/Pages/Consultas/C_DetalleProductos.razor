@@ -1,0 +1,92 @@
+﻿@page "/detallesProducto/{ProductoId}"
+
+@inject IServicioProducto ServicioProducto
+@inject HttpClient httpClient
+@inject NotificationService notificationService
+
+
+<RadzenNotification />
+@if(producto != null)
+{
+    <div class="container text-center">
+        <div class="card">
+            <div class="media">
+                <div class="img-container">
+                    @if (producto.Foto != null)
+                    {
+                        var base64 = Convert.ToBase64String(producto.Foto);
+                        var imgSrc = $"data:image/jpeg;base64,{base64}";
+
+                        <img src="@imgSrc" alt="Imagen del producto" class="item-imagen" width="300" />
+
+                    }
+                </div>
+
+                <div class="media-body">
+                    <h2 class="mb-0">@(producto != null ? producto.Nombre : "Producto no encontrado")</h2>
+                    <p>@producto.Descripcion</p>
+                    @if (producto.PrecioOriginal > producto.Precio)
+                    {
+                        <h6 class="text-muted original-price">RD$ @producto.PrecioOriginal</h6>
+                    }
+
+                    <h4 class="price">
+                        RD$ @producto.Precio
+                    </h4>
+
+                    <a href="/carritoCompras"><button @onclick="AgregarCarrito" class="btn btn-outline-primary"><i class="bi bi-cart"></i> Agregar al carrito</button> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code 
+
+{
+    public Productos producto { get; set; }
+
+    [Parameter]
+    public string ProductoId { get; set; }
+
+    [Inject]
+    public IServicioCarrito ServicioCarrito { get; set; }
+
+    public NotificationMessage Mensaje { get; set; } = new NotificationMessage();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(ServicioProducto.productos == null || ServicioProducto.productos.Count == 0)
+        {
+            await ServicioProducto.CargarProductos($"api/Productos");
+        }
+
+        producto = ServicioProducto.productos.FirstOrDefault(p => p.ProductoId == Int32.Parse(ProductoId));
+    }
+
+
+    public void AgregarCarrito()
+    {
+        var objetoNuevo = new Carrito
+        {
+          ProductoId = 1,
+          Nombre = "Este es el producto de ejemplo",
+          Precio = 2490,
+          Cantidad = 1
+        };
+
+        ServicioCarrito.AgregarCarrito(objetoNuevo);
+
+        Mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Ha agregado el producto al carrito",
+                Detail = $"El producto {producto.Nombre} ha sido agregado al carrito",
+                Duration = 5_000
+            };
+        notificationService.Notify(Mensaje);
+        return;
+    }
+}
